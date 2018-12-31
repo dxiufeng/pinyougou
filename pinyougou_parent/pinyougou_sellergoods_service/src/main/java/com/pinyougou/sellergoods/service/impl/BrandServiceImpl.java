@@ -41,4 +41,11 @@ public class BrandServiceImpl implements BrandService {
         return pageResult;
     }
 
+
+    //添加品牌
+    @Override
+    public void saveBround(TbBrand brand) {
+        brandMapper.insert(brand);
+    }
+
 }

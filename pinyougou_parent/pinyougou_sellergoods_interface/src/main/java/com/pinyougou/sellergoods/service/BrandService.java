@@ -17,4 +17,7 @@ public interface BrandService {
 
 	//分页查询
 	public PageResult findPage(Integer currentPage, Integer pageSize);
+
+	//保存brand
+	public void saveBround(TbBrand brand);
 }

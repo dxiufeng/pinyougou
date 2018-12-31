@@ -19,13 +19,13 @@
     <script>
         var app = angular.module("pinyougou", ['pagination']);
         app.controller("brandController", function ($scope,$http) {
-                $scope.findAll=function () {
+               /* $scope.findAll=function () {
                     $http.get("../brand/findAll.do").success(
                         function (response) {
                             $scope.pageResult=response;
                         }
                     )
-                };
+                };*/
                 
                 /*分页配置信息*/
                 $scope.paginationConf={
@@ -46,12 +46,28 @@
                 };
 
 
-
+                //分页
                 $scope.findPage=function (page,size) {
                     $http.get('../brand/findPage.do?page='+page+'&size='+size+'').success(
                         function (response) {
                             $scope.list=response.rows;//显示当前的数据
                             $scope.paginationConf.totalItems=response.total;//更新总记录数
+                        }
+                    )
+                }
+                
+                
+                //保存品牌
+                $scope.saveBrand=function () {
+                    $http.post('../brand/saveBrand.do?',$scope.brand).success(
+                        function (response) {
+                            $scope.Result=response;
+                            if($scope.Result.flag){
+                                $scope.reloadPage();
+                            }else {
+                                alert($scope.Result.msg);
+                            }
+
                         }
                     )
                 }
@@ -141,16 +157,16 @@
                 <table class="table table-bordered table-striped" width="800px">
                     <tr>
                         <td>品牌名称</td>
-                        <td><input class="form-control" placeholder="品牌名称"></td>
+                        <td><input class="form-control" placeholder="品牌名称" ng-model="brand.name"></td>
                     </tr>
                     <tr>
                         <td>首字母</td>
-                        <td><input class="form-control" placeholder="首字母"></td>
+                        <td><input class="form-control" placeholder="首字母" ng-model="brand.firstChar"></td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true">保存</button>
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="saveBrand()">保存</button>
                 <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
             </div>
         </div>
