@@ -11,6 +11,7 @@
 	
 	<mvc:annotation-driven>
 	  <mvc:message-converters register-defaults="true">
+		  <!--配置json转换器-->
 	    <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">  
 	      <property name="supportedMediaTypes" value="application/json"/>
 	      <property name="features">
