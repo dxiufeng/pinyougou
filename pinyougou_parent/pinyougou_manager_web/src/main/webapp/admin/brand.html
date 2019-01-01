@@ -42,11 +42,11 @@
 
             //刷新页面
             $scope.reloadPage = function () {
-                $scope.findPage($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage)
+                $scope.searchBrand($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage)
             };
 
 
-            //分页
+           /* //分页
             $scope.findPage = function (page, size) {
                 $http.get('../brand/findPage.do?page=' + page + '&size=' + size + '').success(
                     function (response) {
@@ -55,7 +55,7 @@
                     }
                 )
             };
-
+*/
 
             //保存品牌
             $scope.saveBrand = function () {
@@ -130,13 +130,16 @@
             };
 
 
-
-
-
-
-
-
-
+           $scope.searchEntity={};//初始化searchEntity,保证接收的不为null;
+            //条件查询:
+            $scope.searchBrand = function (page,size) {
+                $http.post('../brand/searchPage.do?page=' + page + '&size=' + size + '',$scope.searchEntity).success(
+                    function (response) {
+                        $scope.list = response.rows;//显示当前的数据
+                        $scope.paginationConf.totalItems = response.total;//更新总记录数
+                    }
+                )
+            };
 
 
             //对重复代码进行封装
@@ -171,9 +174,13 @@
                 </div>
             </div>
         </div>
+
+        <!--模糊查询-->
         <div class="box-tools pull-right">
             <div class="has-feedback">
-
+                品牌名称: <input ng-model="searchEntity.name">
+                品牌首字母:<input ng-model="searchEntity.firstChar">
+                <button class="btn btn-default" title="查询" ng-click="reloadPage()">查询</button>
             </div>
         </div>
         <!--工具栏/-->
@@ -209,7 +216,6 @@
         <!--分页控件-->
         <tm-pagination conf="paginationConf"></tm-pagination>
 
-        {{ids}}
 
     </div>
     <!-- 数据表格 /-->
