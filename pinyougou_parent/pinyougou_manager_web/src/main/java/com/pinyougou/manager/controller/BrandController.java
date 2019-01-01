@@ -46,4 +46,16 @@ public class BrandController {
 			return new Result(false,"添加失败");
 		}
 	}
+
+	//修改
+	@RequestMapping("/updateBrand")
+	public Result updateBrand(@RequestBody TbBrand brand){
+		try {
+			brandService.changeBrand(brand);
+			return new Result(true,"修改成功");
+		} catch (Exception e) {
+			return new Result(false,"修改失败");
+		}
+	}
+
 }

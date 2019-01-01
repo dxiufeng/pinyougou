@@ -20,4 +20,10 @@ public interface BrandService {
 
 	//保存brand
 	public void saveBround(TbBrand brand);
+
+
+
+
+	//修改brand
+	public void changeBrand(TbBrand brand);
 }

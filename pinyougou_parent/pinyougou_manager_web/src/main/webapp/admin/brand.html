@@ -54,22 +54,49 @@
                             $scope.paginationConf.totalItems=response.total;//更新总记录数
                         }
                     )
-                }
+                };
                 
                 
                 //保存品牌
                 $scope.saveBrand=function () {
-                    $http.post('../brand/saveBrand.do?',$scope.brand).success(
-                        function (response) {
-                            $scope.Result=response;
-                            if($scope.Result.flag){
-                                $scope.reloadPage();
-                            }else {
-                                alert($scope.Result.msg);
+
+                    if ($scope.entity.id==null){
+                        //若果id值是null,说明是想数据库中添加数据
+                        $http.post('../brand/saveBrand.do?',$scope.entity).success(
+                            function (response) {
+                                $scope.Result=response;
+                                if($scope.Result.flag){
+                                    $scope.reloadPage();
+                                }else {
+                                    alert($scope.Result.msg);
+                                }
+
+                            }
+                        )
+                    }else {
+                        //如果id不是null,说明是想数据库中修改数据
+                        $http.post('../brand/updateBrand.do',$scope.entity).success(
+
+                            function (response) {
+                                $scope.Result=response;
+                                if($scope.Result.flag){
+                                    $scope.reloadPage();
+                                }else {
+                                    alert($scope.Result.msg);
+                                }
                             }
 
-                        }
-                    )
+                        )
+
+                    }
+
+
+                };
+
+                //修改品牌
+                $scope.changeBrand=function (brand) {
+                    //把原来的数据赋值到表格中,并发送ajax请求
+                    $scope.entity=brand;
                 }
         })
     </script>
@@ -92,7 +119,7 @@
             <div class="form-group form-inline">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default" title="新建" data-toggle="modal"
-                            data-target="#editModal"><i class="fa fa-file-o"></i> 新建
+                            data-target="#editModal" ng-click="entity={}"><i class="fa fa-file-o"></i> 新建
                     </button>
                     <button type="button" class="btn btn-default" title="删除"><i class="fa fa-trash-o"></i> 删除</button>
                     <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i
@@ -128,7 +155,7 @@
                 <td>{{brand.name}}</td>
                 <td>{{brand.firstChar}}</td>
                 <td class="text-center">
-                    <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal">修改
+                    <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" ng-click="changeBrand(brand)">修改
                     </button>
                 </td>
             </tr>
@@ -157,11 +184,11 @@
                 <table class="table table-bordered table-striped" width="800px">
                     <tr>
                         <td>品牌名称</td>
-                        <td><input class="form-control" placeholder="品牌名称" ng-model="brand.name"></td>
+                        <td><input class="form-control" placeholder="品牌名称" ng-model="entity.name"></td>
                     </tr>
                     <tr>
                         <td>首字母</td>
-                        <td><input class="form-control" placeholder="首字母" ng-model="brand.firstChar"></td>
+                        <td><input class="form-control" placeholder="首字母" ng-model="entity.firstChar"></td>
                     </tr>
                 </table>
             </div>
