@@ -50,13 +50,22 @@ public class BrandServiceImpl implements BrandService {
 
 
 
-    //修改品牌,把
+    //修改品牌
     @Override
     public void changeBrand(TbBrand brand) {
        brandMapper.updateByPrimaryKey(brand);
 
     }
 
+
+    //删除品牌
+    @Override
+    public void deleteBrand(Long[] ids) {
+        for (Long id : ids) {
+            brandMapper.deleteByPrimaryKey(id);
+        }
+
+    }
 
 
 }

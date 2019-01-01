@@ -13,91 +13,134 @@
     <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="../plugins/angularjs/angular.min.js"></script>
     <!--分页插件引用-->
-        <script src="../plugins/angularjs/pagination.js"></script>
-        <link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+    <script src="../plugins/angularjs/pagination.js"></script>
+    <link rel="stylesheet" href="../plugins/angularjs/pagination.css">
     <!--分页插件引用-->
     <script>
         var app = angular.module("pinyougou", ['pagination']);
-        app.controller("brandController", function ($scope,$http) {
-               /* $scope.findAll=function () {
-                    $http.get("../brand/findAll.do").success(
-                        function (response) {
-                            $scope.pageResult=response;
-                        }
-                    )
-                };*/
-                
-                /*分页配置信息*/
-                $scope.paginationConf={
-                    currentPage:1, //当前页码
-                    totalItems:10, //总记录数
-                    itemsPerPage:10, //每页显示条数
-                    perPageOptions:[10,20,30,40,50], //分页选项
-                    onChange:function(){
-                        //当页码触发后自动变更的方法
-                        $scope.reloadPage();
-                    }
+        app.controller("brandController", function ($scope, $http) {
+            /* $scope.findAll=function () {
+                 $http.get("../brand/findAll.do").success(
+                     function (response) {
+                         $scope.pageResult=response;
+                     }
+                 )
+             };*/
 
-                };
-
-                //刷新页面
-                $scope.reloadPage=function () {
-                    $scope.findPage( $scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage)
-                };
-
-
-                //分页
-                $scope.findPage=function (page,size) {
-                    $http.get('../brand/findPage.do?page='+page+'&size='+size+'').success(
-                        function (response) {
-                            $scope.list=response.rows;//显示当前的数据
-                            $scope.paginationConf.totalItems=response.total;//更新总记录数
-                        }
-                    )
-                };
-                
-                
-                //保存品牌
-                $scope.saveBrand=function () {
-
-                    if ($scope.entity.id==null){
-                        //若果id值是null,说明是想数据库中添加数据
-                        $http.post('../brand/saveBrand.do?',$scope.entity).success(
-                            function (response) {
-                                $scope.Result=response;
-                                if($scope.Result.flag){
-                                    $scope.reloadPage();
-                                }else {
-                                    alert($scope.Result.msg);
-                                }
-
-                            }
-                        )
-                    }else {
-                        //如果id不是null,说明是想数据库中修改数据
-                        $http.post('../brand/updateBrand.do',$scope.entity).success(
-
-                            function (response) {
-                                $scope.Result=response;
-                                if($scope.Result.flag){
-                                    $scope.reloadPage();
-                                }else {
-                                    alert($scope.Result.msg);
-                                }
-                            }
-
-                        )
-
-                    }
-
-
-                };
-
-                //修改品牌
-                $scope.changeBrand=function (brand) {
-                    //把原来的数据赋值到表格中,并发送ajax请求
-                    $scope.entity=brand;
+            /*分页配置信息*/
+            $scope.paginationConf = {
+                currentPage: 1, //当前页码
+                totalItems: 10, //总记录数
+                itemsPerPage: 10, //每页显示条数
+                perPageOptions: [10, 20, 30, 40, 50], //分页选项
+                onChange: function () {
+                    //当页码触发后自动变更的方法
+                    $scope.reloadPage();
                 }
+
+            };
+
+            //刷新页面
+            $scope.reloadPage = function () {
+                $scope.findPage($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage)
+            };
+
+
+            //分页
+            $scope.findPage = function (page, size) {
+                $http.get('../brand/findPage.do?page=' + page + '&size=' + size + '').success(
+                    function (response) {
+                        $scope.list = response.rows;//显示当前的数据
+                        $scope.paginationConf.totalItems = response.total;//更新总记录数
+                    }
+                )
+            };
+
+
+            //保存品牌
+            $scope.saveBrand = function () {
+
+                if ($scope.entity.id == null) {
+                    //若果id值是null,说明是想数据库中添加数据
+                    $http.post('../brand/saveBrand.do?', $scope.entity).success(
+                        function (response) {
+                            $scope.Result = response;
+                            if ($scope.Result.flag) {
+                                $scope.reloadPage();
+                            } else {
+                                alert($scope.Result.msg);
+                            }
+
+                        }
+                    )
+                } else {
+                    //如果id不是null,说明是想数据库中修改数据
+                    $http.post('../brand/updateBrand.do', $scope.entity).success(
+                        function (response) {
+                            $scope.Result = response;
+                            if ($scope.Result.flag) {
+                                $scope.reloadPage();
+                            } else {
+                                alert($scope.Result.msg);
+                            }
+                        }
+                    )
+
+                }
+
+
+            };
+
+            //修改品牌
+            $scope.changeBrand = function (brand) {
+                //把原来的数据赋值到表格中,并发送ajax请求
+                $scope.entity = brand;
+            };
+
+          //删除品牌:
+            //1在$scope中建立变量ids
+            $scope.ids = [];
+            //2创建方法,当选中是后,id值放入到ids中
+            $scope.addId=function ($event,id) {
+                if ( $event.target.checked){
+                    //如果选中了就向ids中添加数据
+                    $scope.ids.push(id);
+                }else {
+                    //反之移除数据
+                    var index = $scope.ids.indexOf(id);
+                    $scope.ids.splice(index,1);
+
+                }
+
+
+            };
+
+            //3调用删除方法,把ids传入到后台
+            $scope.deleteBrand=function () {
+                $http.post('../brand/deleteBrand.do?ids='+$scope.ids+'').success(
+                   function (response) {
+                       $scope.Result = response;
+                       if ($scope.Result.flag) {
+                           $scope.reloadPage();
+                       } else {
+                           alert($scope.Result.msg);
+                       }
+                   }
+                )
+            };
+
+
+
+
+
+
+
+
+
+
+
+            //对重复代码进行封装
+
         })
     </script>
 
@@ -121,7 +164,7 @@
                     <button type="button" class="btn btn-default" title="新建" data-toggle="modal"
                             data-target="#editModal" ng-click="entity={}"><i class="fa fa-file-o"></i> 新建
                     </button>
-                    <button type="button" class="btn btn-default" title="删除"><i class="fa fa-trash-o"></i> 删除</button>
+                    <button type="button" class="btn btn-default" title="删除" ng-click="deleteBrand()"><i class="fa fa-trash-o"></i> 删除</button>
                     <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i
                             class="fa fa-refresh"></i> 刷新
                     </button>
@@ -150,12 +193,13 @@
             </thead>
             <tbody>
             <tr ng-repeat="brand in list">
-                <td><input type="checkbox"></td>
+                <td><input type="checkbox" ng-click="addId($event,brand.id)"></td>
                 <td>{{brand.id}}</td>
                 <td>{{brand.name}}</td>
                 <td>{{brand.firstChar}}</td>
                 <td class="text-center">
-                    <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal" ng-click="changeBrand(brand)">修改
+                    <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal"
+                            ng-click="changeBrand(brand)">修改
                     </button>
                 </td>
             </tr>
@@ -164,6 +208,8 @@
         <!--数据列表/-->
         <!--分页控件-->
         <tm-pagination conf="paginationConf"></tm-pagination>
+
+        {{ids}}
 
     </div>
     <!-- 数据表格 /-->
@@ -193,7 +239,8 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="saveBrand()">保存</button>
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="saveBrand()">保存
+                </button>
                 <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
             </div>
         </div>
