@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pinyougou.mapper.TbSpecificationMapper;
 import com.pinyougou.mapper.TbSpecificationOptionMapper;
@@ -153,6 +154,13 @@ public class SpecificationServiceImpl implements SpecificationService {
         long total = page.getTotal();
         List<TbSpecification> result = page.getResult();
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    //查找规格下拉列表
+    @Override
+    public List<Map> selectOptionList() {
+        List<Map> maps = specificationMapper.selectOptionList();
+        return maps;
     }
 
 }

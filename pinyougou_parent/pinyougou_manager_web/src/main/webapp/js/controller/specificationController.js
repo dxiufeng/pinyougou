@@ -92,5 +92,6 @@ app.controller('specificationController' ,function($scope,$controller,specificat
 		$scope.entity.specificationOptionList.splice(index,1);
     }
 
+
     
 });	

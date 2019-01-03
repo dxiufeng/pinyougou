@@ -1,5 +1,6 @@
 package com.pinyougou.manager.controller;
 import java.util.List;
+import java.util.Map;
 
 import com.pinyougou.pojo.TbSpecification;
 import com.pinyougou.pojogroup.Specification;
@@ -114,6 +115,15 @@ public class SpecificationController {
 
 		PageResult page1 = specificationService.findPage(specification, page, rows);
 		return page1;
+	}
+
+
+	//查找规格下拉框
+	@RequestMapping("/selectOptionList")
+	public List<Map> selectOptionList(){
+		List<Map> maps = specificationService.selectOptionList();
+		System.out.println(maps);
+		return maps;
 	}
 	
 }

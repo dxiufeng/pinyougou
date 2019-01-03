@@ -36,6 +36,7 @@
 
 	<!--引入brandService.js,进行方法调用-->
 	<script src="../js/service/brandService.js"></script>
+	<script src="../js/service/specificationService.js"></script>
 
 	<script src="../js/service/typeTemplateService.js"></script>
 	<script src="../js/controller/baseController.js"></script>
@@ -48,7 +49,7 @@
 
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="typeTemplateController" ng-init="selectOptionList()">
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="typeTemplateController" ng-init="findBrandList();findSpecList()">
   <!-- .box-body -->
                 
                     <div class="box-header with-border">
@@ -149,7 +150,7 @@
 		      	<tr>
 		      		<td>关联规格</td>
 		      		<td>
-	
+						<input select2  select2-model="entity.specIds" config="specList" multiple placeholder="选择规格（可多选）" class="form-control" type="text"/>
 		      		</td>
 		      	</tr>	
 		      	
