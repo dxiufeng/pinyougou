@@ -30,22 +30,37 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 			}
 		);				
 	}
-	
+
+
+	//修改
+    $scope.save=function(){
+        var serviceObject;//服务层对象
+        if($scope.entity.id!=null){//如果有ID
+            serviceObject=typeTemplateService.update( $scope.entity ); //修改
+        }else{
+            serviceObject=typeTemplateService.add( $scope.entity  );//增加
+        }
+        serviceObject.success(
+            function(response){
+                if(response.success){
+                    //重新查询
+                    $scope.reloadList();//重新加载
+                }else{
+                    alert(response.message);
+                }
+            }
+        );
+    }
+
 	//保存 
-	$scope.save=function(){				
-		var serviceObject;//服务层对象  				
-		if($scope.entity.id!=null){//如果有ID
-			serviceObject=typeTemplateService.update( $scope.entity ); //修改  
-		}else{
-			serviceObject=typeTemplateService.add( $scope.entity  );//增加 
-		}				
-		serviceObject.success(
+	$scope.add=function(){
+        typeTemplateService.add( $scope.entity  ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
 				}else{
-					alert(response.message);
+					alert(response.msg);
 				}
 			}		
 		);				
@@ -101,7 +116,6 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
     };
 
     //增加行
-	/*$scope.entity={customAttributeItems:[]};*/
 	$scope.addTableRow=function () {
         $scope.entity.customAttributeItems.push({});
     }
