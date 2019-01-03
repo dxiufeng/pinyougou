@@ -65,7 +65,7 @@ public class SpecificationController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbSpecification specification){
+	public Result update(@RequestBody Specification specification){
 		try {
 			specificationService.update(specification);
 			return new Result(true, "修改成功");
@@ -81,8 +81,9 @@ public class SpecificationController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbSpecification findOne(Long id){
-		return specificationService.findOne(id);		
+	public Specification findOne(Long id){
+		Specification specification = specificationService.findOne(id);
+		return specification;
 	}
 	
 	/**

@@ -29,7 +29,7 @@ app.controller('specificationController' ,function($scope,$controller,specificat
 				$scope.entity= response;					
 			}
 		);				
-	}
+	};
 	
 	//保存 
 	$scope.save=function(){				

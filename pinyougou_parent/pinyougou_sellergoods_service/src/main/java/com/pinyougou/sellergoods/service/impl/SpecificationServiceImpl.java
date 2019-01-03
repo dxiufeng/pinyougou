@@ -6,6 +6,7 @@ import com.pinyougou.mapper.TbSpecificationMapper;
 import com.pinyougou.mapper.TbSpecificationOptionMapper;
 import com.pinyougou.pojo.TbSpecification;
 import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojo.TbSpecificationOptionExample;
 import com.pinyougou.pojogroup.Specification;
 import com.pinyougou.sellergoods.service.SpecificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,21 @@ public class SpecificationServiceImpl implements SpecificationService {
      * 修改
      */
     @Override
-    public void update(TbSpecification specification) {
-        specificationMapper.updateByPrimaryKey(specification);
+    public void update(Specification specification) {
+        TbSpecification tb = specification.getSpecification();
+        specificationMapper.updateByPrimaryKey(tb);//修改tbSpecification
+
+        //修改tbSpecificationOption
+        List<TbSpecificationOption> spOptions = specification.getSpecificationOptionList();
+        System.out.println(spOptions);
+        for (TbSpecificationOption spOption : spOptions) {
+            specificationOptionMapper.deleteByPrimaryKey(spOption.getId());//把每一个TbSpecificationOption的specId等于tbSpecification的id,这样对应得上
+            spOption.setSpecId(tb.getId());
+            specificationOptionMapper.insert(spOption);
+
+        }
+
+
     }
 
     /**
@@ -83,8 +97,19 @@ public class SpecificationServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    public TbSpecification findOne(Long id) {
-        return specificationMapper.selectByPrimaryKey(id);
+    public Specification findOne(Long id) {
+        TbSpecification tbSpecification = specificationMapper.selectByPrimaryKey(id);
+        Specification specification = new Specification();
+        specification.setSpecification(tbSpecification);//设置tbSpecification到specification中
+
+
+        TbSpecificationOptionExample example=new TbSpecificationOptionExample();
+        TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
+        criteria.andSpecIdEqualTo(id);
+        List<TbSpecificationOption> tbSpecificationOptionList = specificationOptionMapper.selectByExample(example);
+        specification.setSpecificationOptionList(tbSpecificationOptionList);//设置tbSpecificationOptionList到specification中
+
+        return specification;
     }
 
     /**
