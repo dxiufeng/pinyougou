@@ -58,10 +58,12 @@ app.controller('specificationController' ,function($scope,$controller,specificat
 		//获取选中的复选框			
 		specificationService.dele( $scope.selectIds ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
 					$scope.selectIds=[];
-				}						
+				}else {
+                    alert(response.msg);
+				}
 			}		
 		);				
 	};
