@@ -100,6 +100,16 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
         )
     };
 
+    //增加行
+	/*$scope.entity={customAttributeItems:[]};*/
+	$scope.addTableRow=function () {
+        $scope.entity.customAttributeItems.push({});
+    }
+
+    //删除行
+	$scope.deleTableRow=function (index) {
+		$scope.entity.customAttributeItems.splice(index,1);
+    }
 
 
     
