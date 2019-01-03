@@ -107,7 +107,7 @@
                 <table class="table table-bordered table-striped" width="800px">
                     <tr>
                         <td>规格名称</td>
-                        <td><input class="form-control" placeholder="规格名称"></td>
+                        <td><input class="form-control" placeholder="规格名称" ng-model="entity.specification.specName"></td>
                     </tr>
                 </table>
 
@@ -129,13 +129,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-model="entity.specificationOptionList" ng-repeat="pojo in entity.specificationOptionList">
+                    <tr ng-repeat="pojo in entity.specificationOptionList">
 
                         <td>
-                            <input class="form-control" placeholder="规格选项">
+                            <input class="form-control" placeholder="规格选项" ng-model="pojo.optionName">
                         </td>
                         <td>
-                            <input class="form-control" placeholder="排序">
+                            <input class="form-control" placeholder="排序" ng-model="pojo.orders">
                         </td>
                         <td>
                             <button type="button" class="btn btn-default" title="删除" ng-click="deleTableRow($index)"><i class="fa fa-trash-o"></i> 删除
@@ -149,7 +149,7 @@
 
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true">保存</button>
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="save()">保存</button>
                 <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
             </div>
         </div>

@@ -3,7 +3,10 @@ package com.pinyougou.sellergoods.service.impl;
 import java.util.List;
 
 import com.pinyougou.mapper.TbSpecificationMapper;
+import com.pinyougou.mapper.TbSpecificationOptionMapper;
 import com.pinyougou.pojo.TbSpecification;
+import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojogroup.Specification;
 import com.pinyougou.sellergoods.service.SpecificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -27,6 +30,9 @@ public class SpecificationServiceImpl implements SpecificationService {
     @Autowired
     private TbSpecificationMapper specificationMapper;
 
+    @Autowired
+    private TbSpecificationOptionMapper specificationOptionMapper;
+
     /**
      * 查询全部
      */
@@ -49,8 +55,16 @@ public class SpecificationServiceImpl implements SpecificationService {
      * 增加
      */
     @Override
-    public void add(TbSpecification specification) {
-        specificationMapper.insert(specification);
+    public void add(Specification specification) {
+        System.out.println("这里过了一下");
+        TbSpecification spec = specification.getSpecification();
+        specificationMapper.insert(spec);//对specification中的TbSpecification进行添加
+
+        List<TbSpecificationOption> tbSpecificationOptions = specification.getSpecificationOptionList();
+        for (TbSpecificationOption tbSpecificationOption : tbSpecificationOptions) {
+            tbSpecificationOption.setSpecId(spec.getId());
+            specificationOptionMapper.insert(tbSpecificationOption);
+        }
     }
 
 
