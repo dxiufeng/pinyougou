@@ -15,7 +15,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 
 import com.pinyougou.pojo.TbSpecificationExample;
-import com.pinyougou.pojo.TbSpecificationExample.Criteria;
 
 
 import entity.PageResult;
@@ -79,9 +78,15 @@ public class SpecificationServiceImpl implements SpecificationService {
 
         //修改tbSpecificationOption
         List<TbSpecificationOption> spOptions = specification.getSpecificationOptionList();
+
+        TbSpecificationOptionExample example = new TbSpecificationOptionExample();
+        TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
+        criteria.andSpecIdEqualTo(tb.getId());
+        //删除所有与TbSpecification表id相同的TbSpecificationOption表中的内容
+        specificationOptionMapper.deleteByExample(example);
         System.out.println(spOptions);
         for (TbSpecificationOption spOption : spOptions) {
-            specificationOptionMapper.deleteByPrimaryKey(spOption.getId());//把每一个TbSpecificationOption的specId等于tbSpecification的id,这样对应得上
+            //把每一个TbSpecificationOption的specId等于tbSpecification的id,这样对应得上
             spOption.setSpecId(tb.getId());
             specificationOptionMapper.insert(spOption);
 
@@ -102,8 +107,7 @@ public class SpecificationServiceImpl implements SpecificationService {
         Specification specification = new Specification();
         specification.setSpecification(tbSpecification);//设置tbSpecification到specification中
 
-
-        TbSpecificationOptionExample example=new TbSpecificationOptionExample();
+        TbSpecificationOptionExample example = new TbSpecificationOptionExample();
         TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
         criteria.andSpecIdEqualTo(id);
         List<TbSpecificationOption> tbSpecificationOptionList = specificationOptionMapper.selectByExample(example);
@@ -129,7 +133,7 @@ public class SpecificationServiceImpl implements SpecificationService {
         PageHelper.startPage(pageNum, pageSize);
 
         TbSpecificationExample example = new TbSpecificationExample();
-        Criteria criteria = example.createCriteria();
+        TbSpecificationExample.Criteria criteria = example.createCriteria();
 
         if (specification != null) {
             if (specification.getSpecName() != null && specification.getSpecName().length() > 0) {
