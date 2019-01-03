@@ -1,6 +1,7 @@
 package com.pinyougou.manager.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pinyougou.sellergoods.service.BrandService;
 import entity.PageResult;
@@ -77,5 +78,13 @@ public class BrandController {
 
         PageResult page = brandService.findPage(currentPage, pageSize, brand);
         return page;
+    }
+
+    @RequestMapping("/selectOptionList")
+    public List<Map> selectOptionList(){
+
+        List<Map> maps = brandService.selectOptionList();
+
+        return maps;
     }
 }

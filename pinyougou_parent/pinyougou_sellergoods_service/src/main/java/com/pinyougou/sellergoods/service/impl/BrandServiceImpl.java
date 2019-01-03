@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -105,6 +106,12 @@ public class BrandServiceImpl implements BrandService {
         pageResult.setTotal(page.getTotal());
 
         return pageResult;
+    }
+
+    @Override
+    public List<Map> selectOptionList() {
+        List<Map> maps = brandMapper.selectOptionList();
+        return maps;
     }
 
 

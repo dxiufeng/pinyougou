@@ -33,6 +33,12 @@ app.service("brandService", function ($http) {
     }
 
 
+    ////查询所有的品牌信息封装到map集合中并整个变为list集合
+    this.selectOptionList=function () {
+        return $http.get('../brand/selectOptionList.do')
+    }
+
+
 
 
 
