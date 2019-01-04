@@ -1,4 +1,5 @@
 package com.pinyougou.sellergoods.service.impl;
+import java.util.Date;
 import java.util.List;
 
 import com.pinyougou.mapper.TbSellerMapper;
@@ -49,7 +50,8 @@ public class SellerServiceImpl implements SellerService {
 	 */
 	@Override
 	public void add(TbSeller seller) {
-		seller.setStatus("0");
+		seller.setStatus("0");//为未激活
+		seller.setCreateTime(new Date());//申请日期
 		sellerMapper.insert(seller);		
 	}
 
