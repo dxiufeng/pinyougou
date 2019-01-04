@@ -30,7 +30,13 @@
         <security:headers>
             <security:frame-options policy="SAMEORIGIN"/>
         </security:headers>
+
+
+        <!--退出-->
+        <security:logout logout-success-url="/login.html"/>
     </security:http>
+
+
 
     <!--3配置认证管理器..(权限和密码-->
     <security:authentication-manager>
