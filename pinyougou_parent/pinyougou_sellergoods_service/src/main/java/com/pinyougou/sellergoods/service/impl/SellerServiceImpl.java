@@ -49,6 +49,7 @@ public class SellerServiceImpl implements SellerService {
 	 */
 	@Override
 	public void add(TbSeller seller) {
+		seller.setStatus("0");
 		sellerMapper.insert(seller);		
 	}
 
