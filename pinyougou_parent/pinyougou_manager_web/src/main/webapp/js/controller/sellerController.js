@@ -26,7 +26,9 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 	$scope.findOne=function(id){				
 		sellerService.findOne(id).success(
 			function(response){
-				$scope.entity= response;					
+
+				$scope.entity= response;
+				alert($scope.entity.sellerId)
 			}
 		);				
 	}
