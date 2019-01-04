@@ -23,10 +23,13 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 	}
 	
 	//查询实体 
-	$scope.findOne=function(id){				
+	$scope.findOne=function(id){
 		typeTemplateService.findOne(id).success(
 			function(response){
-				$scope.entity= response;					
+				$scope.entity= response;
+				$scope.entity.specIds=JSON.parse($scope.entity.specIds);
+                $scope.entity.brandIds=JSON.parse($scope.entity.brandIds);
+                $scope.entity.customAttributeItems=JSON.parse($scope.entity.customAttributeItems);
 			}
 		);				
 	}
@@ -38,21 +41,21 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
         if($scope.entity.id!=null){//如果有ID
             serviceObject=typeTemplateService.update( $scope.entity ); //修改
         }else{
-            serviceObject=typeTemplateService.add( $scope.entity  );//增加
+            serviceObject=typeTemplateService.add( $scope.entity);//增加
         }
         serviceObject.success(
             function(response){
-                if(response.success){
+                if(response.flag){
                     //重新查询
                     $scope.reloadList();//重新加载
                 }else{
-                    alert(response.message);
+                    alert(response.msg);
                 }
             }
         );
     }
 
-	//保存 
+	//保存 单独列出来了,后面还是会和修改合并到一起使用
 	$scope.add=function(){
         typeTemplateService.add( $scope.entity  ).success(
 			function(response){
@@ -64,7 +67,7 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 				}
 			}		
 		);				
-	}
+	};
 	
 	 
 	//批量删除 
@@ -72,7 +75,7 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
 		//获取选中的复选框			
 		typeTemplateService.dele( $scope.selectIds ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
 					$scope.selectIds=[];
 				}						
@@ -115,12 +118,12 @@ app.controller('typeTemplateController' ,function($scope,$controller   ,typeTemp
         )
     };
 
-    //增加行
+    //类型模板编辑增加行
 	$scope.addTableRow=function () {
         $scope.entity.customAttributeItems.push({});
     }
 
-    //删除行
+    //类型模板编辑删除行
 	$scope.deleTableRow=function (index) {
 		$scope.entity.customAttributeItems.splice(index,1);
     }
