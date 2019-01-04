@@ -20,7 +20,7 @@
     <security:http pattern="/css/**" security="none"></security:http>
     <security:http pattern="/js/**" security="none"></security:http>
     <security:http pattern="/plugins/**" security="none"></security:http>
-    <security:http pattern="/seller/save.do" security="none"></security:http>
+    <security:http pattern="/seller/add.do" security="none"></security:http>
 
     <!--2配置基本的拦截规则-->
     <security:http use-expressions="false">
@@ -45,7 +45,7 @@
     <!--3配置认证管理器..(权限和密码-->
     <security:authentication-manager>
         <security:authentication-provider user-service-ref="userDetailsService">
-
+            <security:password-encoder ref="passwordEncoder"/>
         </security:authentication-provider>
     </security:authentication-manager>
 
@@ -58,5 +58,9 @@
     <dubbo:application name="pinyougou-shop-web"/>
     <dubbo:registry address="zookeeper://192.168.25.130:2181"/>
     <dubbo:reference interface="com.pinyougou.sellergoods.service.SellerService" id="sellerService"/>
+
+
+    <!--容器中添加加密类,在认证管理器中引用加密类-->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 </beans>
