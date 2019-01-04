@@ -111,5 +111,18 @@ public class SellerController {
 	public PageResult search(@RequestBody TbSeller seller, int page, int rows  ){
 		return sellerService.findPage(seller, page, rows);		
 	}
+
+
+	//用于更改用户是否激活的状态
+	@RequestMapping("/updateStatus")
+	public Result updateStatus(String sellerId,String status){
+		try {
+			sellerService.updataStatus(sellerId,status );
+			return new Result(true, "激活成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "激活失败");
+		}
+	}
 	
 }

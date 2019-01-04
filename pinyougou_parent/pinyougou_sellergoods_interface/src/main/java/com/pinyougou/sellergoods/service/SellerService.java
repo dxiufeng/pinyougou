@@ -58,5 +58,12 @@ public interface SellerService {
 	 * @return
 	 */
 	public PageResult findPage(TbSeller seller, int pageNum, int pageSize);
+
+	/**
+	 * 用于更改用户是否激活的状态,传递两个值,id和status,
+	 * 用过id找到需要更改状态的数据,把数据中的一列该为status
+	 */
+
+	public void updataStatus(String sellerId,String status);
 	
 }

@@ -28,7 +28,7 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 			function(response){
 
 				$scope.entity= response;
-				alert($scope.entity.sellerId)
+
 			}
 		);				
 	}
@@ -43,11 +43,11 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
 				}else{
-					alert(response.message);
+					alert(response.msg);
 				}
 			}		
 		);				
@@ -59,7 +59,7 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 		//获取选中的复选框			
 		sellerService.dele( $scope.selectIds ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
 					$scope.selectIds=[];
 				}						
@@ -78,5 +78,23 @@ app.controller('sellerController' ,function($scope,$controller   ,sellerService)
 			}			
 		);
 	}
+
+
+	//更改seller的状态,觉得是否 激活或者关闭
+
+	$scope.updateStatus=function (sellerId, status) {
+
+		sellerService.updateStatus(sellerId,status).success(
+			function (response) {
+                if(response.flag){
+                    //重新查询
+                    $scope.reloadList();//重新加载
+                }else{
+                    alert(response.msg);
+                }
+            }
+
+		)
+    }
     
 });	
