@@ -86,8 +86,8 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 	$scope.searchEntity={};//定义搜索对象 
 
 
-	$scope.myId;
-    //第一次加载分类管理中内容
+	$scope.myId;//当加载分类导航栏是后会刷新一遍,用于记录当前的id,并刷新,传入
+    //第一次加载分类管理中内容  //触发方法后执行查询和分页效果
 	$scope.search=function(parentId,page,rows){
         $scope.myId=parentId;
 		itemCatService.findByParentId(parentId,page,rows).success(
@@ -97,14 +97,32 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 			}			
 		);
 	};
-	//触发方法后执行查询和分页效果
-	$scope.findByParentId=function (parentId, page, rows) {
 
-        itemCatService.findByParentId(parentId,page,rows).success(
-            function(response){
-                $scope.list=response.rows;
-                $scope.paginationConf.totalItems=response.total;//更新总记录数
-            }
-        );
+	//定义分层级别
+	$scope.grade=1;
+	$scope.setGrade=function (index) {
+        $scope.grade=index;
+    };
+	//定义面包屑逻辑
+	$scope.selectList=function (entity, page, rows) {
+
+		//第一级别,也就是第一级分类目录
+		if ($scope.grade==1){
+			$scope.entity_1=null;
+			$scope.entity_2=null;
+		}
+
+        //第二级别,也就是第二级分类目录
+		if ($scope.grade==2){
+            $scope.entity_1=entity;
+			$scope.entity_2=null
+		}
+
+		if ($scope.grade==3){
+			$scope.entity_2=entity;
+		}
+        $scope.search(entity.id,page,rows)
+
+
     }
 });	
