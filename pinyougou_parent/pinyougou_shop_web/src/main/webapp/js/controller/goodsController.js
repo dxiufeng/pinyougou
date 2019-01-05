@@ -52,12 +52,14 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 	}
 	//添加数据
     $scope.add=function(){
+        $scope.entity.goodsDesc.introduction=editor.html();
         goodsService.add( $scope.entity  ).success(
             function(response){
                 if(response.flag){
                     //重新查询
                     alert(response.msg);
-                    $scope.entity={}
+                    $scope.entity={};
+                    editer.html("");
                 }else{
                     alert(response.msg);
                 }
