@@ -61,6 +61,7 @@ app.controller("brandController", function ($scope, $http, brandService,$control
             )
         } else {
             //如果id不是null,说明是想数据库中修改数据
+
             brandService.updateBrand($scope.entity).success(
                 function (response) {
                     $scope.Result = response;

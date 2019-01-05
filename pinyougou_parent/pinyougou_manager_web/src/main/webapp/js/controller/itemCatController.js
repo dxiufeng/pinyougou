@@ -2,6 +2,24 @@
 app.controller('itemCatController' ,function($scope,$controller   ,itemCatService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
+
+    //分页控件配置
+    $scope.paginationConf = {
+        currentPage: 1,
+        totalItems: 10,
+        itemsPerPage: 10,
+        perPageOptions: [10, 20, 30, 40, 50],
+        onChange: function () {
+            $scope.reloadList();//重新加载
+        }
+    };
+
+    //重新加载列表 数据
+    $scope.reloadList = function () {
+        //切换页码
+
+        $scope.search($scope.myId,$scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
+    };
 	
     //读取列表数据绑定到表单中  
 	$scope.findAll=function(){
@@ -10,7 +28,7 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 				$scope.list=response;
 			}			
 		);
-	}    
+	};
 	
 	//分页
 	$scope.findPage=function(page,rows){			
@@ -66,15 +84,27 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 	}
 	
 	$scope.searchEntity={};//定义搜索对象 
-	
-	//搜索
-	$scope.search=function(page,rows){			
-		itemCatService.search(page,rows,$scope.searchEntity).success(
+
+
+	$scope.myId;
+    //第一次加载分类管理中内容
+	$scope.search=function(parentId,page,rows){
+        $scope.myId=parentId;
+		itemCatService.findByParentId(parentId,page,rows).success(
 			function(response){
 				$scope.list=response.rows;	
 				$scope.paginationConf.totalItems=response.total;//更新总记录数
 			}			
 		);
-	}
-    
+	};
+	//触发方法后执行查询和分页效果
+	$scope.findByParentId=function (parentId, page, rows) {
+
+        itemCatService.findByParentId(parentId,page,rows).success(
+            function(response){
+                $scope.list=response.rows;
+                $scope.paginationConf.totalItems=response.total;//更新总记录数
+            }
+        );
+    }
 });	

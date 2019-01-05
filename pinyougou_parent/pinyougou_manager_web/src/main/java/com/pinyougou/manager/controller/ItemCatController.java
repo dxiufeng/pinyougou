@@ -5,6 +5,7 @@ import com.pinyougou.pojo.TbItemCat;
 import com.pinyougou.sellergoods.service.ItemCatService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
 
@@ -109,7 +110,16 @@ public class ItemCatController {
 	 */
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbItemCat itemCat, int page, int rows  ){
-		return itemCatService.findPage(itemCat, page, rows);		
+		return itemCatService.findPage(itemCat, page, rows);
+	}
+
+
+	//根据父类id查找子类数据
+	@RequestMapping("/findByParentId")
+	public PageResult findByParentId(@RequestParam(name = "parentId",defaultValue = "0") String parentId, Integer page, Integer rows){
+		long id = Long.parseLong(parentId);
+		PageResult pageResult = itemCatService.findByParentId(id, page, rows);
+		return pageResult;
 	}
 	
 }

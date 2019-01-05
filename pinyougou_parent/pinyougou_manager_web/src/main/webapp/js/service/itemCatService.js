@@ -28,5 +28,12 @@ app.service('itemCatService',function($http){
 	//搜索
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../itemCat/search.do?page='+page+"&rows="+rows, searchEntity);
-	}    	
+	}
+
+	this.findByParentId=function (parentId, page, rows) {
+	    if (parentId==null){
+	        parentId=0;
+        }
+		return $http.get('../itemCat/findByParentId.do?parentId='+parentId+'&page='+page+'&rows='+rows+'');
+    }
 });
