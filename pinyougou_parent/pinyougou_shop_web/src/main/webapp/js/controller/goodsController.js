@@ -49,10 +49,11 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 				}
 			}		
 		);				
-	}
+	};
 	//添加数据
     $scope.add=function(){
         $scope.entity.goodsDesc.introduction=editor.html();
+
         goodsService.add( $scope.entity  ).success(
             function(response){
                 if(response.flag){
@@ -65,7 +66,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
                 }
             }
         );
-    }
+    };
 	
 	 
 	//批量删除 
@@ -106,6 +107,17 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
             }
 
 		)
+    }
+
+    //添加定义方法,把图片添加到entity.goodsDesc.imagesItem中
+	$scope.entity={goods:{},goodsDesc:{itemImages:[]}};
+    $scope.add_image_entity=function () {
+    	$scope.entity.goodsDesc.itemImages.push($scope.img_entity);
+
+    }
+
+    $scope.dele_image_entity=function (index) {
+        $scope.entity.goodsDesc.itemImages.splice(index,1);
     }
     
 });	
