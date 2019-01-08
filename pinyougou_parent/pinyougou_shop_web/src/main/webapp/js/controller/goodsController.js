@@ -178,4 +178,21 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
     })
 
 
+    //访问两张表数据,传入id,得到一个list集合,list[{a:1,b:2,options:[{c:3,d:4}]}]
+    $scope.$watch('entity.goods.typeTemplateId', function (newValue, oldValue) {
+        if (newValue==null){
+            newValue=0;
+        }
+        typeTemplateService.findSpecList(newValue).success(
+            function (response) {
+                $scope.specList = response;
+
+            }
+        )
+
+    })
+
+
+
+
 });

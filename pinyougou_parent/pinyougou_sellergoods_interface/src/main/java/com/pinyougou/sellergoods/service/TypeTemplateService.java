@@ -1,5 +1,6 @@
 package com.pinyougou.sellergoods.service;
 import java.util.List;
+import java.util.Map;
 
 
 import com.pinyougou.pojo.TbTypeTemplate;
@@ -58,5 +59,12 @@ public interface TypeTemplateService {
 	 * @return
 	 */
 	public PageResult findPage(TbTypeTemplate typeTemplate, int pageNum, int pageSize);
-	
+
+
+	/**
+	 * 查询表tb_type_template和表tb_specification_option,获得相关数据并封装成list集合
+	 */
+
+	public List<Map> findSpecList(Long id);
+
 }
