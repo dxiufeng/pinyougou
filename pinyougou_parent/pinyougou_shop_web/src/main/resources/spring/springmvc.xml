@@ -42,5 +42,4 @@
     <dubbo:annotation package="com.pinyougou.shop.controller"/>
 
 
-
 </beans>
