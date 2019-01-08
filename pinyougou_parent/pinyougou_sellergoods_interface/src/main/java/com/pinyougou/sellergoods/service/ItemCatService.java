@@ -65,5 +65,13 @@ public interface ItemCatService {
 	 */
 
 	public PageResult findByParentId(Long parentId, int pageNum, int pageSize);
-	
+
+
+	/**
+	 * goods_edit页面中进行分类查询表ItemCat,不需要进行分页查询
+	 * parentId 传入父类的id,进行分类查询
+	 */
+
+	public List<TbItemCat> findByParentIdOne(Long parentId);
+
 }

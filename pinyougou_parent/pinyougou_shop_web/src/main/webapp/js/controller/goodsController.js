@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService,uploadService){
+app.controller('goodsController' ,function($scope,$controller   ,goodsService,uploadService,itemCatService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -115,9 +115,55 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
     	$scope.entity.goodsDesc.itemImages.push($scope.img_entity);
 
     }
-
+	//删除图片
     $scope.dele_image_entity=function (index) {
         $scope.entity.goodsDesc.itemImages.splice(index,1);
     }
-    
+
+
+    //进行分目录选择一级
+	$scope.selectItemCat1List=function (parentId) {
+		itemCatService.findByParentId(parentId).success(
+			function (response) {
+                $scope.ItemCat1List=response;
+            }
+		)
+    }
+
+    //进行分目录选择二级newValue,和oldValue都是该属性itemCat的id值
+	$scope.$watch('entity.goods.category1Id',function (newValue,oldValue) {
+        itemCatService.findByParentId(newValue).success(
+            function (response) {
+                $scope.ItemCat2List=response;
+            }
+        )
+    });
+
+    //进行分目录选择三级
+    $scope.$watch('entity.goods.category2Id',function (newValue,oldValue) {
+        itemCatService.findByParentId(newValue).success(
+            function (response) {
+                $scope.ItemCat3List=response;
+
+               /* $scope.getTypeId($scope.ItemCat3List);*/
+            }
+        )
+    })
+
+    //读取三级目录下的typeId
+	/*$scope.getTypeId=function (itemCat3List) {
+		$scope.typeId=itemCat3List[0].typeId;
+    }*/
+    //查询模板id
+    $scope.$watch('entity.goods.category3Id',function (newValue,oldValue) {
+        itemCatService.findOne(newValue).success(
+            function (response) {
+                $scope.entity.goods.typeTemplateId=response.typeId;
+
+                /* $scope.getTypeId($scope.ItemCat3List);*/
+            }
+        )
+    })
+
+
 });	
