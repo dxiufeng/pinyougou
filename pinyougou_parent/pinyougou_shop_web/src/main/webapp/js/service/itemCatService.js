@@ -11,6 +11,9 @@ app.service('itemCatService',function($http){
 	}
 	//查询实体
 	this.findOne=function(id){
+        if (id==null){
+            return;
+        }
 		return $http.get('../itemCat/findOne.do?id='+id);
 	}
 	//增加 
@@ -33,6 +36,9 @@ app.service('itemCatService',function($http){
 
 	//查询商品分类
 	this.findByParentId=function (parentId) {
+		if (parentId==null){
+			return;
+		}
 		return $http.get('../itemCat/findByParentIdOne.do?parentId='+parentId);
     }
 });

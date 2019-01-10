@@ -41,11 +41,11 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         }
         serviceObject.success(
             function (response) {
-                if (response.success) {
+                if (response.flag) {
                     //重新查询
                     $scope.reloadList();//重新加载
                 } else {
-                    alert(response.message);
+                    alert(response.msg);
                 }
             }
         );
@@ -165,6 +165,9 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
 
 
     $scope.$watch('entity.goods.typeTemplateId', function (newValue, oldValue) {
+        if (newValue==null){
+            return;
+        }
         typeTemplateService.findOne(newValue).success(
             function (response) {
                 $scope.tbTypeTemplate = response;//返回一个tbTypeTemplate对象
@@ -178,10 +181,10 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
     })
 
 
-    //访问两张表数据,传入id,得到一个list集合,list[{a:1,b:2,options:[{c:3,d:4}]}]
+    //访问两张表数据,传入id,得到一个list集合,list[{a:1,b:2,options:[{c:3,d:4}]},,,]
     $scope.$watch('entity.goods.typeTemplateId', function (newValue, oldValue) {
-        if (newValue==null){
-            newValue=0;
+        if (newValue == null) {
+            return;
         }
         typeTemplateService.findSpecList(newValue).success(
             function (response) {
@@ -193,6 +196,72 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
     })
 
 
+    //规格保存设置
+
+//规格现在,绑定选定后到规格到表goodsDesc中的specificationItemslie     // //[{"attributeName":"网络制式","attributeValue":["移动3G","移动4G"]},{"attributeName":"屏幕尺寸","attributeValue":["6寸","5寸"]}]
+
+    $scope.entity = {goodsDesc: {itemImages: [], specificationItems: []}};
+
+    $scope.updateSpecAttribute = function ($event, name, value) {
+        //通过传入list集合,name,value,获得某一个集合list[i]
+        var object = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems, 'attributeName', name);
+
+        if (object == null) {
+            $scope.entity.goodsDesc.specificationItems.push({'attributeName': name, 'attributeValue': [value]})
+        } else {
+            if ($event.target.checked) {
+                object.attributeValue.push(value)
+
+            } else {
+                object.attributeValue.splice(object.attributeValue.indexOf(value), 1)
+                if (object.attributeValue.length == 0) {
+                    $scope.entity.goodsDesc.specificationItems.splice($scope.entity.goodsDesc.specificationItems.indexOf(object), 1)
+                }
+            }
+
+
+        }
+
+    };
+
+
+    //sku商品列表封装[{spec:{},price:0,num:99999,status:'0',isDefault:'0'},];//初始化列表
+    $scope.createItemList = function () {
+        $scope.entity.itemList = [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}];
+
+        var items = $scope.entity.goodsDesc.specificationItems;//[{"attributeName":"网络制式","attributeValue":["移动3G","移动4G"]},{"attributeName":"屏幕尺寸","attributeValue":["6寸","5寸"]}]
+
+        //循环遍历items
+        for (var i = 0; i < items.length; i++) {
+            $scope.entity.itemList = addColumn($scope.entity.itemList, items[i].attributeName, items[i].attributeValue);
+        }
+    };
+
+
+    addColumn = function (list, columnName, columnValues) {//第一次传过来数据:list 是 [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}]   ,columnName  是"网络制式: ,columnValues 是["移动3G","移动4G"]
+        var newList=[];//新的
+        for (var i=0; i<list.length;i++){
+            var oldRow=list[i];
+
+            for(var j=0;j<columnValues.length;j++){
+                var newRow = JSON.parse( JSON.stringify(oldRow));
+
+                newRow.spec[columnName]=columnValues[j];
+
+                newList.push(newRow)
+            }
+        }
+
+        return newList;
+    }
+
+
+    //清空方法
+    $scope.clearSome=function () {
+        $scope.entity.itemList = [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}];
+        $scope.entity.goodsDesc.specificationItems=[];
+
+    }
 
 
 });

@@ -11,6 +11,9 @@ app.service('sellerService',function($http){
 	}
 	//查询实体
 	this.findOne=function(id){
+        if (id==null){
+            return;
+        }
 		return $http.get('../seller/findOne.do?id='+id);
 	}
 	//增加 

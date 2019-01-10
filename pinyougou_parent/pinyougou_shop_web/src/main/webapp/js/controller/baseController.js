@@ -47,4 +47,20 @@ app.controller('baseController', function ($scope) {
     }
 
 
+    //在list集合中查询key的值
+    //[{"attributeName":"网络制式","attributeValue":["移动3G","移动4G"]},{"attributeName":"屏幕尺寸","attributeValue":["6寸","5寸"]}]
+
+    //list就是上面的数据list集合,key是"attributeName",keyValue是"网络制式"
+    $scope.searchObjectByKey=function (list,key,keyValue) {
+        for(var i=0;i<list.length;i++){
+            var newVar = list[i][key];
+            if(newVar==keyValue){
+                return list[i]
+            }
+        }
+        return null;
+
+    }
+
+
 });

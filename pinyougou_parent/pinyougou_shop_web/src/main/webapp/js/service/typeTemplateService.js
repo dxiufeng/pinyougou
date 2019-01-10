@@ -11,6 +11,9 @@ app.service('typeTemplateService',function($http){
 	}
 	//查询实体
 	this.findOne=function(id){
+        if (id==null){
+            return;
+        }
 		return $http.get('../typeTemplate/findOne.do?id='+id);
 	}
 	//增加 
@@ -31,6 +34,9 @@ app.service('typeTemplateService',function($http){
 	}
 
 	this.findSpecList=function (id) {
+		if (id==null){
+			return;
+		}
 
 		return $http.get('../typeTemplate/findSpecList.do?id='+id);
     }
