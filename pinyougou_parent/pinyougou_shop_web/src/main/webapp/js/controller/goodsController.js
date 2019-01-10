@@ -309,7 +309,6 @@ app.controller('goodsController', function ($scope, $controller, $location, good
 
 
     //读取规格属性
-
     $scope.checkAttributeValue = function (spaceName, optionName) {
 
         var object = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems, 'attributeName', spaceName);

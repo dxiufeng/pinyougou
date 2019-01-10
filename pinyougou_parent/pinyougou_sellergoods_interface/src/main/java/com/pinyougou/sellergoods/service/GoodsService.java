@@ -59,5 +59,11 @@ public interface GoodsService {
 	 * @return
 	 */
 	public PageResult findPage(TbGoods goods, int pageNum, int pageSize);
-	
+
+
+	/**
+	 * 更改审核状态
+	 */
+	public void updateStatus(Long[] ids,String status);
+
 }
