@@ -1,5 +1,5 @@
  //控制层 
-app.controller('contentController' ,function($scope,$controller   ,contentService){	
+app.controller('contentController' ,function($scope,$controller   ,contentService,uploadService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -76,5 +76,20 @@ app.controller('contentController' ,function($scope,$controller   ,contentServic
 			}			
 		);
 	}
+
+
+	//上传图片
+    $scope.uploadFile=function () {
+        uploadService.uploadFile().success(
+        	function (response) {
+        		alert("aaa");
+				if (response.flag){
+					$scope.entity.pic=response.msg;
+				}else {
+					response.msg;
+				}
+            }
+		)
+    }
     
 });	
