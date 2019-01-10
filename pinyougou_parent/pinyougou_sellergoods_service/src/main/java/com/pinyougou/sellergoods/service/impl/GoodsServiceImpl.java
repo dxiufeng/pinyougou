@@ -79,65 +79,8 @@ public class GoodsServiceImpl implements GoodsService {
 		goodsDescMapper.insert(goodsDesc);
 
 
-		if ("1".equals(goods.getGoods().getIsEnableSpec())){
-			//增加需要插入的表items数据
-			List<TbItem> items = goods.getItemList();//获得item集合数据
-			for (TbItem item : items) {
-				//title
-				String title = goods.getGoods().getGoodsName();
-
-
-				String sp = item.getSpec();
-				Map<String,Object> map = JSONObject.parseObject(sp);//{"网络":"移动3G","机身内存":"32G"}
-				Set<String> set = map.keySet();
-				for (String s : set) {
-					title+=" "+map.get(s);
-				}
-
-				item.setTitle(title);//商品标题
-				item.setGoodsId(goods.getGoods().getId());//商品编号
-				item.setCategoryid(goods.getGoods().getCategory3Id());//商品分类编号
-				item.setCreateTime(new Date());//创建日期
-				item.setUpdateTime(new Date());//修改日期
-
-				//品牌
-				TbBrand tbBrand = brandMapper.selectByPrimaryKey(goods.getGoods().getBrandId());
-				item.setBrand(tbBrand.getName());
-				//分类名称
-				TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(goods.getGoods().getCategory3Id());
-				item.setCategory(tbItemCat.getName());
-				//商家名称
-				TbSeller seller = sellerMapper.selectByPrimaryKey(goods.getGoods().getSellerId());
-				item.setSeller(seller.getNickName());
-				//图片地址
-				String itemImages = goods.getGoodsDesc().getItemImages();
-
-
-
-				List<Map> list = com.alibaba.fastjson.JSON.parseArray(itemImages, Map.class);
-
-
-
-
-				if (list.size()>0){
-					String url = (String) list.get(0).get("url");
-					item.setImage(url);
-				}
-
-
-				itemMapper.insert(item);
-
-
-			}
-
-
-
-
-
-
-
-		}
-
+        //在item表中插入数据
+        saveItemList(goods);//插入sku列表数据
 
 	}
 
@@ -146,9 +89,89 @@ public class GoodsServiceImpl implements GoodsService {
 	 * 修改
 	 */
 	@Override
-	public void update(TbGoods goods){
-		goodsMapper.updateByPrimaryKey(goods);
-	}	
+	public void update(Goods goods){
+
+		goods.getGoods().setAuditStatus("0");//修改后要重写审核,设置状态为0
+	   //更改goods表数据
+        goodsMapper.updateByPrimaryKey(goods.getGoods());
+
+
+        //更改goodsDesc
+        goodsDescMapper.updateByPrimaryKey(goods.getGoodsDesc());
+
+        //更改表item  先删除在插入
+        TbItemExample example=new TbItemExample();
+        TbItemExample.Criteria criteria = example.createCriteria();
+        criteria.andGoodsIdEqualTo(goods.getGoods().getId());
+        itemMapper.deleteByExample(example);//删除当前goodsId下的所有数据
+
+
+        //在item表中插入相关数据
+        saveItemList(goods);//插入sku列表数据
+
+	}
+
+
+
+    //插入sku列表数据
+	private void saveItemList(Goods goods){
+        //启用规格后
+        if ("1".equals(goods.getGoods().getIsEnableSpec())){
+            //增加需要插入的表items数据
+            List<TbItem> items = goods.getItemList();//获得item集合数据
+            for (TbItem item : items) {
+                //title
+                String title = goods.getGoods().getGoodsName();
+
+
+                String sp = item.getSpec();
+                Map<String,Object> map = JSONObject.parseObject(sp);//{"网络":"移动3G","机身内存":"32G"}
+                Set<String> set = map.keySet();
+                for (String s : set) {
+                    title+=" "+map.get(s);
+                }
+
+                item.setTitle(title);//商品标题
+
+
+                item.setGoodsId(goods.getGoods().getId());//商品编号
+                item.setCategoryid(goods.getGoods().getCategory3Id());//商品分类编号
+                item.setCreateTime(new Date());//创建日期
+                item.setUpdateTime(new Date());//修改日期
+
+                //品牌
+                TbBrand tbBrand = brandMapper.selectByPrimaryKey(goods.getGoods().getBrandId());
+                item.setBrand(tbBrand.getName());
+                //分类名称
+                TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(goods.getGoods().getCategory3Id());
+                item.setCategory(tbItemCat.getName());
+                //商家名称
+                TbSeller seller = sellerMapper.selectByPrimaryKey(goods.getGoods().getSellerId());
+                item.setSeller(seller.getNickName());
+                //图片地址
+                String itemImages = goods.getGoodsDesc().getItemImages();
+
+
+
+                List<Map> list = com.alibaba.fastjson.JSON.parseArray(itemImages, Map.class);
+
+
+
+
+                if (list.size()>0){
+                    String url = (String) list.get(0).get("url");
+                    item.setImage(url);
+                }
+
+
+                itemMapper.insert(item);
+
+
+            }
+        }
+    }
+
+
 	
 	/**
 	 * 根据ID获取实体

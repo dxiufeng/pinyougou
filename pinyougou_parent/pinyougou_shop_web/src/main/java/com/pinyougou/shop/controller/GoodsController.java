@@ -69,7 +69,19 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody Goods goods){
+		//判断修改商品数据是当前登录的用户的数据
+		Goods goods1 = goodsService.findOne(goods.getGoods().getId());
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();//获取当前登录用户名
+
+		if (!username.equals(goods1.getGoods().getSellerId()) || !username.equals(goods.getGoods().getSellerId()) ){
+			return new Result(false,"非法操作");
+		}
+
+
+
+
 		try {
 			goodsService.update(goods);
 			return new Result(true, "修改成功");
