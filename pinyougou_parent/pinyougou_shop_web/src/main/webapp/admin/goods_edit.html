@@ -45,7 +45,7 @@
 
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List(0)">
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List(0);findOne()">
 
             <!-- 正文区域 -->
             <section class="content">
@@ -183,11 +183,11 @@
                            
                             <!--扩展属性-->
                             <div class="tab-pane" id="customAttribute">
-                                <div class="row data-type" ng-repeat="item in tbTypeTemplate.customAttributeItems">
+                                <div class="row data-type" ng-repeat="item in entity.goodsDesc.customAttributeItems ">
 	                                <div>
 		                                <div class="col-md-2 title">{{item.text}}</div>
 				                        <div class="col-md-10 data">
-				                              <input class="form-control" placeholder="{{item.text}}">
+				                              <input class="form-control" placeholder="{{item.text}}" ng-model="item.value">
 				                        </div>
 	                                </div>
                                 </div>
@@ -212,7 +212,7 @@
 					                        <div class="col-md-10 data" >
 					                               
 					                            <span ng-repeat="option in pojo.options">
-					                            	<input  type="checkbox" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()">{{option.optionName}}
+					                            	<input  type="checkbox" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()" ng-checked="checkAttributeValue(pojo.text,option.optionName)">{{option.optionName}}
 					                            </span>
 					                        </div>
 		                                </div>

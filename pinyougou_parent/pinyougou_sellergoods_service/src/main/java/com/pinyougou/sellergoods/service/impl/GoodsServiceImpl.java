@@ -156,8 +156,22 @@ public class GoodsServiceImpl implements GoodsService {
 	 * @return
 	 */
 	@Override
-	public TbGoods findOne(Long id){
-		return goodsMapper.selectByPrimaryKey(id);
+	public Goods findOne(Long id){
+
+        Goods goods = new Goods();
+	    //查询tbgoods 商品表
+        TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+        goods.setGoods(tbGoods);
+
+        //查询商品扩展表goodsDesc
+        TbGoodsDesc tbGoodsDesc = goodsDescMapper.selectByPrimaryKey(id);
+        goods.setGoodsDesc(tbGoodsDesc);
+
+        //查询sku表 (tbItem表)
+
+
+
+        return goods;
 	}
 
 	/**

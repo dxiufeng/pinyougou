@@ -1,5 +1,5 @@
 //控制层
-app.controller('goodsController', function ($scope, $controller, goodsService, uploadService, itemCatService, typeTemplateService) {
+app.controller('goodsController', function ($scope, $controller,$location, goodsService, uploadService, itemCatService, typeTemplateService) {
 
     $controller('baseController', {$scope: $scope});//继承
 
@@ -23,10 +23,22 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
     }
 
     //查询实体
-    $scope.findOne = function (id) {
+    $scope.findOne = function () {
+        var id = $location.search()['id'];
+
+        if (id==null){
+            return;
+        }
+
+
         goodsService.findOne(id).success(
             function (response) {
                 $scope.entity = response;
+                editor.html($scope.entity.goodsDesc.introduction); //商品介绍
+                $scope.entity.goodsDesc.itemImages=JSON.parse($scope.entity.goodsDesc.itemImages);//商品图片转换
+                $scope.entity.goodsDesc.customAttributeItems=JSON.parse($scope.entity.goodsDesc.customAttributeItems)//扩展属性
+                $scope.entity.goodsDesc.specificationItems=JSON.parse($scope.entity.goodsDesc.specificationItems);//获得存放规格选项的集合
+
             }
         );
     }
@@ -163,7 +175,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         )
     });
 
-
+        //模板id变化后
     $scope.$watch('entity.goods.typeTemplateId', function (newValue, oldValue) {
         if (newValue==null){
             return;
@@ -175,7 +187,11 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
                 $scope.tbTypeTemplate.brandIds = JSON.parse($scope.tbTypeTemplate.brandIds);
 
                 //扩展属性
-                $scope.tbTypeTemplate.customAttributeItems = JSON.parse($scope.tbTypeTemplate.customAttributeItems)
+                if ($location.search()['id']==null){
+                    //增加商品
+                    $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.tbTypeTemplate.customAttributeItems)
+                }
+
             }
         )
     })
@@ -278,6 +294,20 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
             }
 
         )
+    }
+
+
+    //读取规格属性
+
+    $scope.checkAttributeValue=function (spaceName,optionName) {
+
+        var object = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems,'attributeName',spaceName);
+        if (object!=null){
+            if (object.attributeValue.indexOf(optionName)>=0){
+                return true
+            }
+        }
+        return false;
     }
 
 
