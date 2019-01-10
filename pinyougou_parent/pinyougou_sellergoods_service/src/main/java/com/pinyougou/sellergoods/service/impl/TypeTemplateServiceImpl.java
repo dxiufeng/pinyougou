@@ -22,6 +22,7 @@ import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
 
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -29,6 +30,7 @@ import entity.PageResult;
  * @author Administrator
  */
 @Service
+@Transactional
 public class TypeTemplateServiceImpl implements TypeTemplateService {
 
     @Autowired

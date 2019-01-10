@@ -20,6 +20,7 @@ import com.pinyougou.pojo.TbGoodsExample.Criteria;
 
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -27,6 +28,7 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
 
 	@Autowired
@@ -70,6 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
 		TbGoods goods1 = goods.getGoods();
 		goods1.setAuditStatus("0");
 		goodsMapper.insert(goods1);	//在插入的时候要插入两张表分别是tbgoods和tbgoodsDesc
+
 
 		//id同步
 		TbGoodsDesc goodsDesc = goods.getGoodsDesc();
