@@ -74,7 +74,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         //获取选中的复选框
         goodsService.dele($scope.selectIds).success(
             function (response) {
-                if (response.success) {
+                if (response.flag) {
                     $scope.reloadList();//刷新列表
                     $scope.selectIds = [];
                 }
@@ -262,6 +262,24 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         $scope.entity.goodsDesc.specificationItems=[];
 
     }
+
+    //商品列表状态设置
+    $scope.status=['未审核','已审核','未通过','关闭']
+
+    //查询分类名称
+    $scope.itemCatList=[];
+    $scope.findItemCatList=function () {
+        itemCatService.findAll().success(
+            function (response) {
+                for(var i=0;i<response.length;i++){
+
+                    $scope.itemCatList[response[i].id]=response[i].name;
+                }
+            }
+
+        )
+    }
+
 
 
 });
