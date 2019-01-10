@@ -59,8 +59,8 @@ app.controller('goodsController', function ($scope, $controller, $location, good
 
                     //重新查询
                     alert(response.msg);
-                    $scope.entity = {};
-                    editer.html("");
+                    location.href="goods.html";
+
                 } else {
 
                     alert(response.msg);
