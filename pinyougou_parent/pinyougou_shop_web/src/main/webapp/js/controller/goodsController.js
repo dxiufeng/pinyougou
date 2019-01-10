@@ -1,5 +1,5 @@
 //控制层
-app.controller('goodsController', function ($scope, $controller,$location, goodsService, uploadService, itemCatService, typeTemplateService) {
+app.controller('goodsController', function ($scope, $controller, $location, goodsService, uploadService, itemCatService, typeTemplateService) {
 
     $controller('baseController', {$scope: $scope});//继承
 
@@ -26,7 +26,7 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
     $scope.findOne = function () {
         var id = $location.search()['id'];
 
-        if (id==null){
+        if (id == null) {
             return;
         }
 
@@ -35,9 +35,9 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
             function (response) {
                 $scope.entity = response;
                 editor.html($scope.entity.goodsDesc.introduction); //商品介绍
-                $scope.entity.goodsDesc.itemImages=JSON.parse($scope.entity.goodsDesc.itemImages);//商品图片转换
-                $scope.entity.goodsDesc.customAttributeItems=JSON.parse($scope.entity.goodsDesc.customAttributeItems)//扩展属性
-                $scope.entity.goodsDesc.specificationItems=JSON.parse($scope.entity.goodsDesc.specificationItems);//获得存放规格选项的集合
+                $scope.entity.goodsDesc.itemImages = JSON.parse($scope.entity.goodsDesc.itemImages);//商品图片转换
+                $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.entity.goodsDesc.customAttributeItems)//扩展属性
+                $scope.entity.goodsDesc.specificationItems = JSON.parse($scope.entity.goodsDesc.specificationItems);//获得存放规格选项的集合
 
             }
         );
@@ -175,9 +175,9 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
         )
     });
 
-        //模板id变化后
+    //模板id变化后
     $scope.$watch('entity.goods.typeTemplateId', function (newValue, oldValue) {
-        if (newValue==null){
+        if (newValue == null) {
             return;
         }
         typeTemplateService.findOne(newValue).success(
@@ -187,9 +187,15 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
                 $scope.tbTypeTemplate.brandIds = JSON.parse($scope.tbTypeTemplate.brandIds);
 
                 //扩展属性
-                if ($location.search()['id']==null){
+                if ($location.search()['id'] == null) {
                     //增加商品
                     $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.tbTypeTemplate.customAttributeItems)
+                }
+
+
+                //商品规格sku
+                for (var i = 0; i < $scope.entity.itemList.length; i++) {
+                    $scope.entity.itemList[i].spec=JSON.parse( $scope.entity.itemList[i].spec);
                 }
 
             }
@@ -255,14 +261,14 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
 
 
     addColumn = function (list, columnName, columnValues) {//第一次传过来数据:list 是 [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}]   ,columnName  是"网络制式: ,columnValues 是["移动3G","移动4G"]
-        var newList=[];//新的
-        for (var i=0; i<list.length;i++){
-            var oldRow=list[i];
+        var newList = [];//新的
+        for (var i = 0; i < list.length; i++) {
+            var oldRow = list[i];
 
-            for(var j=0;j<columnValues.length;j++){
-                var newRow = JSON.parse( JSON.stringify(oldRow));
+            for (var j = 0; j < columnValues.length; j++) {
+                var newRow = JSON.parse(JSON.stringify(oldRow));
 
-                newRow.spec[columnName]=columnValues[j];
+                newRow.spec[columnName] = columnValues[j];
 
                 newList.push(newRow)
             }
@@ -273,43 +279,41 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
 
 
     //清空方法
-    $scope.clearSome=function () {
+    $scope.clearSome = function () {
         $scope.entity.itemList = [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}];
-        $scope.entity.goodsDesc.specificationItems=[];
+        $scope.entity.goodsDesc.specificationItems = [];
 
     }
 
     //商品列表状态设置
-    $scope.status=['未审核','已审核','未通过','关闭']
+    $scope.status = ['未审核', '已审核', '未通过', '关闭'];
 
     //查询分类名称
-    $scope.itemCatList=[];
-    $scope.findItemCatList=function () {
+    $scope.itemCatList = [];
+    $scope.findItemCatList = function () {
         itemCatService.findAll().success(
             function (response) {
-                for(var i=0;i<response.length;i++){
+                for (var i = 0; i < response.length; i++) {
 
-                    $scope.itemCatList[response[i].id]=response[i].name;
+                    $scope.itemCatList[response[i].id] = response[i].name;
                 }
             }
-
         )
-    }
+    };
 
 
     //读取规格属性
 
-    $scope.checkAttributeValue=function (spaceName,optionName) {
+    $scope.checkAttributeValue = function (spaceName, optionName) {
 
-        var object = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems,'attributeName',spaceName);
-        if (object!=null){
-            if (object.attributeValue.indexOf(optionName)>=0){
+        var object = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems, 'attributeName', spaceName);
+        if (object != null) {
+            if (object.attributeValue.indexOf(optionName) >= 0) {
                 return true
             }
         }
         return false;
     }
-
 
 
 });

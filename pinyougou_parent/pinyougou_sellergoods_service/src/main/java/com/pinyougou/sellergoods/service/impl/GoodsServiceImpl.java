@@ -168,9 +168,11 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setGoodsDesc(tbGoodsDesc);
 
         //查询sku表 (tbItem表)
-
-
-
+        TbItemExample example=new TbItemExample();
+        TbItemExample.Criteria criteria = example.createCriteria();
+        criteria.andGoodsIdEqualTo(id);
+        List<TbItem> tbItems = itemMapper.selectByExample(example);
+        goods.setItemList(tbItems);
         return goods;
 	}
 
