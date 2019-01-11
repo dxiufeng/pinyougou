@@ -23,13 +23,14 @@
     <script type="text/javascript" src="../js/service/contentService.js"></script>
     <!--引入图片上传service-->
     <script type="text/javascript" src="../js/service/UploadService.js"></script>
+    <script type="text/javascript" src="../js/service/contentCategoryService.js"></script>
 
 
     <script type="text/javascript" src="../js/controller/baseController.js"></script>
     <script type="text/javascript" src="../js/controller/contentController.js"></script>
 
 </head>
-<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="contentController">
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="contentController" ng-init="findContentCategoryList()">
 <!-- .box-body -->
 <div class="box-header with-border">
     <h3 class="box-title">管理</h3>
@@ -70,7 +71,7 @@
                     <input id="selall" type="checkbox" class="icheckbox_square-blue">
                 </th>
                 <th class="sorting"></th>
-                <th class="sorting">内容类目ID</th>
+                <th class="sorting">内容类目</th>
                 <th class="sorting">内容标题</th>
                 <th class="sorting">链接</th>
                 <th class="sorting">图片绝对路径</th>
@@ -88,7 +89,7 @@
                 <td>{{entity.title}}</td>
                 <td>{{entity.url}}</td>
                 <td>{{entity.pic}}</td>
-                <td>{{entity.status}}</td>
+                <td>{{status[entity.status]}}</td>
                 <td>{{entity.sortOrder}}</td>
 
                 <td class="text-center">
@@ -119,9 +120,12 @@
                 <table class="table table-bordered table-striped" width="800px">
                     <tr>
 
-                        <td>内容类目ID</td>
+                        <td>内容类目</td>
 
-                        <td><input class="form-control" ng-model="entity.categoryId" placeholder="内容类目ID"></td>
+                        <td>
+                            <!--<input class="form-control" ng-model="entity.categoryId" placeholder="内容类目ID">-->
+                            <select ng-options="item.id as item.name for item in contentCategoryList" class="form-control" ng-model="entity.categoryId"></select>
+                        </td>
 
                     </tr>
                     <tr>

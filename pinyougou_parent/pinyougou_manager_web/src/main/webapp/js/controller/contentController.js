@@ -1,5 +1,5 @@
  //控制层 
-app.controller('contentController' ,function($scope,$controller   ,contentService,uploadService){
+app.controller('contentController' ,function($scope,$controller   ,contentService,uploadService,contentCategoryService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -41,11 +41,11 @@ app.controller('contentController' ,function($scope,$controller   ,contentServic
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
 				}else{
-					alert(response.message);
+					alert(response.msg);
 				}
 			}		
 		);				
@@ -82,14 +82,33 @@ app.controller('contentController' ,function($scope,$controller   ,contentServic
     $scope.uploadFile=function () {
         uploadService.uploadFile().success(
         	function (response) {
-        		alert("aaa");
 				if (response.flag){
 					$scope.entity.pic=response.msg;
 				}else {
 					response.msg;
 				}
             }
+		).error(
+			function () {
+				alert("上传出错");
+            }
 		)
     }
-    
+
+
+    //广告分类
+    $scope.findContentCategoryList=function () {
+        contentCategoryService.findAll().success(
+        	function (response) {
+				$scope.contentCategoryList=response;
+            }
+		)
+    }
+
+
+    //广告状态
+
+	$scope.status=['无效','有效'];
+
+
 });	
