@@ -4,13 +4,14 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.search.service.ItemSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.*;
-import org.springframework.data.solr.core.query.result.HighlightEntry;
-import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.data.solr.core.query.result.ScoredPage;
+import org.springframework.data.solr.core.query.result.*;
+import org.springframework.data.solr.core.query.result.HighlightEntry.Highlight;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,9 @@ public class ItemSearchServiceImpl implements ItemSearchService {
     //已经把数据库中的数据都添加到索引库中,并查询索引库
     @Override
     public Map<String, Object> search(Map<String, Object> searchMap) {
+
+
+        //进行普通的查询:
        /* HashMap<String, Object> map = new HashMap<>();
 
         //获取query查询对象
@@ -42,7 +46,26 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
         map.put("rows", items);//封装到map集合中,rows表示每一行的数据,有多行*/
 
+        //------------------------------------------------------------------
+        //高亮查询
+        HashMap<String, Object> map = new HashMap<>();
+        map.putAll(searchList(searchMap));//putAll(),把一个map集合追加到另一个map集合里,便于扩展
 
+
+        //分组查询商品分类列表
+        List list = searchCategoryList(searchMap);
+        map.put("categoryList",list );
+
+        //把查询好的数据放入map集合中返回
+        return map;
+    }
+
+    /**
+     * 查询数据库中符合条件的信息,以Map返回
+     * @param searchMap
+     * @return
+     */
+    private Map searchList(Map<String, Object> searchMap) {
         //高亮结果显示
         HashMap<String, Object> map = new HashMap<>();
 
@@ -76,7 +99,7 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         //entry里面包含了highlightList和item
         for (HighlightEntry<TbItem> entry : list) {
 
-            List<HighlightEntry.Highlight> highlightList = entry.getHighlights();//高亮显示结合
+            List<Highlight> highlightList = entry.getHighlights();//高亮显示结合
 
             //判断是否存在高亮页
             if (highlightList.size() > 0 && highlightList.get(0).getSnipplets().size() > 0) {
@@ -87,8 +110,53 @@ public class ItemSearchServiceImpl implements ItemSearchService {
             }
         }
 
-        //把跳转好的数据放入map集合中返回
         map.put("rows", page.getContent());
+
         return map;
+
+    }
+
+    /**
+     * 分组查询查询商品分类列表
+     * @param searchMap
+     * @return
+     */
+    private List searchCategoryList(Map<String, Object> searchMap) {
+
+        List<String> list =new ArrayList<>();
+
+        //创建查询对象,并添加查询条件 ,类似where ..
+        Query query = new SimpleQuery("*:*");
+        Criteria criteria = new Criteria("item_keywords").is(searchMap.get("keywords"));
+        query.addCriteria(criteria);
+
+        //创建分组对象,添加到查询对象中, 类似group by item_category
+        GroupOptions groupOptions = new GroupOptions().addGroupByField("item_category");
+        query.setGroupOptions(groupOptions);
+
+        //进行solr查询
+        GroupPage<TbItem> page = solrTemplate.queryForGroupPage(query, TbItem.class);
+
+        //获取分组结果对象
+        GroupResult<TbItem> category = page.getGroupResult("item_category");//获取item_category域中的分结果
+
+
+        //获取分组入口页category是一个map集合中包含多个数据,根据key(item_category),得到value(SimpleGroupResult)对象
+        //SimpleGroupResult对象中封装了一个GroupEntries(PageImpl)对象,在GroupEntries对象中有content(List集合)集合
+        //content集合中存储SimpleGroupEntry对象,在该对象中有一个属性groupValue;
+        Page<GroupEntry<TbItem>> groupEntries = category.getGroupEntries();
+        //获取分组入口集合
+        List<GroupEntry<TbItem>> entryList = groupEntries.getContent();
+
+        //遍历把数据放入到list集合中
+        for (GroupEntry<TbItem> entry : entryList) {
+            list.add(entry.getGroupValue());
+        }
+
+
+        return list;
+
+
+
     }
 }
