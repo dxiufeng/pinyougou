@@ -12,11 +12,11 @@ app.controller('searchController',function ($scope,searchService) {
 
 
     //创建一个方法,用于操作面包屑导航栏
-    $scope.searchMap={'keywords':'','category':'','brand':'','spec':{}}; //初始化数据格式
+    $scope.searchMap={'keywords':'','category':'','brand':'','spec':{},'price':''}; //初始化数据格式
 
     //添加搜索条件
     $scope.addSearchItem=function (key,value) {
-        if('category'==key || 'brand' == key){
+        if('category'==key || 'brand' == key || 'price'==key){
             //说明传入的数据是商品分类或者品牌分类
             $scope.searchMap[key]=value;
         }else {
@@ -29,7 +29,7 @@ app.controller('searchController',function ($scope,searchService) {
 
     //删除搜索条件
     $scope.deleSearchItem=function (key) {
-        if('category'==key || 'brand'==key){
+        if('category'==key || 'brand'==key || 'price'==key){
             $scope.searchMap[key]='';
         }else {
             delete $scope.searchMap.spec[key];//移除此属性
