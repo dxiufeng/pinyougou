@@ -21,7 +21,7 @@ public class SolrUtil {
     private SolrTemplate solrTemplate;
 
 
-    //查询数据库Tb_Item表中所有数据
+    //查询数据库Tb_Item表中所有数据,把字段上传到solrhome
     public void importItemData(){
         TbItemExample example=new TbItemExample();
         TbItemExample.Criteria criteria = example.createCriteria();

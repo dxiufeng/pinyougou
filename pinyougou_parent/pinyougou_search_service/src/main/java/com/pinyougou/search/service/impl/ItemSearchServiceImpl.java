@@ -5,6 +5,7 @@ import com.pinyougou.pojo.TbItem;
 import com.pinyougou.search.service.ItemSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.*;
@@ -21,6 +22,9 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
     @Autowired
     private SolrTemplate solrTemplate;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     //已经把数据库中的数据都添加到索引库中,并查询索引库
@@ -55,6 +59,17 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         //分组查询商品分类列表
         List list = searchCategoryList(searchMap);
         map.put("categoryList",list );
+
+        //查询品牌分类列表
+        if (list.size()>0){
+            //把商品分类中第一个分类传入,进行品牌和规格的查询
+            Map brandAndSpecList = searchBrandAndSpecList((String) list.get(0));
+            //放入到map集合中并返回
+            map.putAll(brandAndSpecList);//putAll()可以合并map集合,即合并了brandAndSpecList集合,但是如果有相同 key,会覆盖
+
+        }
+
+
 
         //把查询好的数据放入map集合中返回
         return map;
@@ -155,8 +170,33 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
 
         return list;
-
-
-
     }
+
+    /**
+     * 查询品牌和规格列表
+     */
+
+    private Map searchBrandAndSpecList(String category){
+        Map map=new HashMap();
+
+
+        //查询redis中数据,更加分类名称 查询模板id
+        Long templateId = (Long) redisTemplate.boundHashOps("itemList").get(category);
+
+        if (templateId!=null){
+            //根据模板id,查询品牌分类列表
+            List brandList = (List) redisTemplate.boundHashOps("brandList").get(templateId);
+
+
+            //根据模板id查询规格列表
+            List specList = (List) redisTemplate.boundHashOps("specList").get(templateId);
+
+            map.put("brandList",brandList);
+            map.put("specList",specList );
+        }
+
+
+        return map;
+    }
+
 }
