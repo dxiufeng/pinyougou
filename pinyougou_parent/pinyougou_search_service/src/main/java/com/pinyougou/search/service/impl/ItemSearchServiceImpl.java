@@ -12,10 +12,7 @@ import org.springframework.data.solr.core.query.result.*;
 import org.springframework.data.solr.core.query.result.HighlightEntry.Highlight;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service(timeout = 5000)
 public class ItemSearchServiceImpl implements ItemSearchService {
@@ -58,10 +55,19 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
         //分组查询商品分类列表
         List list = searchCategoryList(searchMap);
-        map.put("categoryList",list );
+        map.put("categoryList", list);
 
         //查询品牌分类列表
-        if (list.size()>0){
+        String category = (String) searchMap.get("category");
+        if (!"".equals(category)){
+            //用户选择了分类选项
+            //把商品分类中第一个分类传入,进行品牌和规格的查询
+            Map brandAndSpecList = searchBrandAndSpecList(category);
+            //放入到map集合中并返回
+            map.putAll(brandAndSpecList);//putAll()可以合并map集合,即合并了brandAndSpecList集合,但是如果有相同 key,会覆盖
+
+        }else {
+            //用户没有选择分类选项,默认第一个分类
             //把商品分类中第一个分类传入,进行品牌和规格的查询
             Map brandAndSpecList = searchBrandAndSpecList((String) list.get(0));
             //放入到map集合中并返回
@@ -77,6 +83,7 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
     /**
      * 查询数据库中符合条件的信息,以Map返回
+     *
      * @param searchMap
      * @return
      */
@@ -99,11 +106,44 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         //query中设置高亮对象
         query.setHighlightOptions(highlightOptions);
 
-        //添加查询条件
+        //1.1关键字查询 添加查询条件
         Criteria criteria = new Criteria("item_keywords");
         criteria.is(searchMap.get("keywords"));
         query.addCriteria(criteria);
+        /***********添加过滤选项***************/
+        //1.2 商品分类过滤
+        if (!"".equals(searchMap.get("category"))) {
+            FilterQuery filterQuery = new SimpleFacetQuery();
+            Criteria filterCriteria = new Criteria("item_category").is(searchMap.get("category"));
+            filterQuery.addCriteria(filterCriteria);
+            //添加过滤条件category
+            query.addFilterQuery(filterQuery);
+        }
 
+        //1.3品牌过滤
+        if (!"".equals(searchMap.get("brand"))){
+            SimpleFilterQuery filterQuery = new SimpleFilterQuery();
+            Criteria filterCriteria = new Criteria("item_brand").is(searchMap.get("brand"));
+            filterQuery.addCriteria(filterCriteria);
+            query.addFilterQuery(filterQuery);
+
+        }
+
+        //1.4规格过滤
+        if (searchMap.get("spec")!=null){
+            SimpleFilterQuery filterQuery = new SimpleFilterQuery();
+            Map<String,String> spec = (Map<String, String>) searchMap.get("spec");
+            Set<String> keys = spec.keySet();
+            for (String key : keys) {
+                Criteria filterCriteria = new Criteria("item_spec_" + key).is(spec.get(key));
+                filterQuery.addCriteria(filterCriteria);
+                query.addFilterQuery(filterQuery);
+            }
+
+        }
+
+
+        /***********获取高亮对象***************/
         //通过solrTemplate进行查询
         HighlightPage<TbItem> page = solrTemplate.queryForHighlightPage(query, TbItem.class);
 
@@ -133,12 +173,13 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
     /**
      * 分组查询查询商品分类列表
+     *
      * @param searchMap
      * @return
      */
     private List searchCategoryList(Map<String, Object> searchMap) {
 
-        List<String> list =new ArrayList<>();
+        List<String> list = new ArrayList<>();
 
         //创建查询对象,并添加查询条件 ,类似where ..
         Query query = new SimpleQuery("*:*");
@@ -176,14 +217,14 @@ public class ItemSearchServiceImpl implements ItemSearchService {
      * 查询品牌和规格列表
      */
 
-    private Map searchBrandAndSpecList(String category){
-        Map map=new HashMap();
+    private Map searchBrandAndSpecList(String category) {
+        Map map = new HashMap();
 
 
         //查询redis中数据,更加分类名称 查询模板id
         Long templateId = (Long) redisTemplate.boundHashOps("itemList").get(category);
 
-        if (templateId!=null){
+        if (templateId != null) {
             //根据模板id,查询品牌分类列表
             List brandList = (List) redisTemplate.boundHashOps("brandList").get(templateId);
 
@@ -191,8 +232,8 @@ public class ItemSearchServiceImpl implements ItemSearchService {
             //根据模板id查询规格列表
             List specList = (List) redisTemplate.boundHashOps("specList").get(templateId);
 
-            map.put("brandList",brandList);
-            map.put("specList",specList );
+            map.put("brandList", brandList);
+            map.put("specList", specList);
         }
 
 

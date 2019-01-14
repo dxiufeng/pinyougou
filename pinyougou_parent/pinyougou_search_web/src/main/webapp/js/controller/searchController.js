@@ -35,7 +35,7 @@ app.controller('searchController',function ($scope,searchService) {
             delete $scope.searchMap.spec[key];//移除此属性
         }
         //当进行修改后,调用search方法对后端进行访问
-        $scope.search()
+        $scope.search();
     }
 
 });
