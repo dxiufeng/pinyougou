@@ -162,6 +162,20 @@ public class ItemSearchServiceImpl implements ItemSearchService {
             query.addFilterQuery(filterQuery);
         }
 
+        //1.6分页
+        Integer currentPage = (Integer) searchMap.get("currentPage");//获取当前页
+        Integer pageSize = (Integer) searchMap.get("pageSize");//获取每页显示记录数
+
+        //初始化变量
+        if (currentPage==null){
+            currentPage=1;
+        }
+        if (pageSize==null){
+            pageSize=20;
+        }
+        //对query进行条件添加
+        query.setOffset((currentPage-1)*pageSize);//开始记录数
+        query.setRows(pageSize);//显示记录数
 
         /***********获取高亮对象***************/
         //通过solrTemplate进行查询
@@ -186,6 +200,8 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         }
 
         map.put("rows", page.getContent());
+        map.put("totalPage",page.getTotalPages());
+        map.put("total",page.getTotalElements());
 
         return map;
 
