@@ -318,4 +318,17 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         System.out.println("数据上传到solr成功");
     }
 
+
+    /**
+     * 删除solr索引库
+     */
+    @Override
+    public void deleteByGoodsIds(Long[] ids) {
+        Query query=new SimpleQuery();
+        Criteria criteria = new Criteria("item_goodsid").in(ids);
+        query.addCriteria(criteria);
+
+        solrTemplate.delete(query);
+        solrTemplate.commit();
+    }
 }

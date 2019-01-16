@@ -101,6 +101,10 @@ public class GoodsController {
     public Result delete(Long[] ids) {
         try {
             goodsService.delete(ids);
+
+            //在逻辑删除的同时,把solr中把相关数据删除
+            itemSearchService.deleteByGoodsIds(ids);
+
             return new Result(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,28 +132,18 @@ public class GoodsController {
     public Result updateStatus(Long[] ids, String status) {
         try {
             goodsService.updateStatus(ids, status);
-            //审核通过后,需要通过这些数据spu的id 来查询出sku的数据,并把数据存储到solr数据库中
 
+            //审核通过后,需要通过这些数据spu的id 来查询出sku的数据,并把数据存储到solr数据库中
             if ("1".equals(status)){
                 //审核通过了
                 //1.根据spu的id 查询sku的数据
                 List<TbItem> itemList = goodsService.findItemListByGoodsIdAndStatus(ids, status);
-
-
                 //判断是否存在sku数据
                 if (itemList.size()>0){
                     //2.把审核好的数据更新到solr中
                     itemSearchService.importItemData(itemList);
                 }
-
-
             }
-
-            if("0".equals(status)){
-                //审核没通过,要删除数据
-            }
-
-
 
             return new Result(true, "审核成功");
         } catch (Exception e) {
