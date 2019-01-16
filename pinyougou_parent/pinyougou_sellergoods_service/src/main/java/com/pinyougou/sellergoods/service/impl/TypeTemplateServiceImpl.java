@@ -126,7 +126,11 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
         Page<TbTypeTemplate> page = (Page<TbTypeTemplate>) typeTemplateMapper.selectByExample(example);
 
         //缓存处理
-        saveToRedis();
+        try {
+            saveToRedis();
+        } catch (Exception e) {
+            System.out.println("缓存失败:findPage");
+        }
 
         return new PageResult(page.getTotal(), page.getResult());
     }

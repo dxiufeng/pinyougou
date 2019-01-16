@@ -5,8 +5,10 @@ import com.pinyougou.pojo.TbItem;
 import com.pinyougou.search.service.ItemSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
+
 import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.*;
 import org.springframework.data.solr.core.query.result.HighlightEntry.Highlight;
@@ -29,6 +31,15 @@ public class ItemSearchServiceImpl implements ItemSearchService {
     public Map<String, Object> search(Map<String, Object> searchMap) {
 
 
+        //防止空字符串查询
+        if ("".equals(searchMap.get("keywords"))){
+            return null;
+        }
+        //防空格查询
+        String keywords = (String) searchMap.get("keywords");
+        String replace = keywords.replace(" ", "");
+        searchMap.put("keywords", replace);
+
         //进行普通的查询:
        /* HashMap<String, Object> map = new HashMap<>();
 
@@ -48,16 +59,16 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         map.put("rows", items);//封装到map集合中,rows表示每一行的数据,有多行*/
 
         //------------------------------------------------------------------
-        //高亮查询
+        //1高亮查询
         HashMap<String, Object> map = new HashMap<>();
         map.putAll(searchList(searchMap));//putAll(),把一个map集合追加到另一个map集合里,便于扩展
 
 
-        //分组查询商品分类列表
+        //2分组查询商品分类列表
         List list = searchCategoryList(searchMap);
         map.put("categoryList", list);
 
-        //查询品牌分类列表
+        //3查询品牌分类列表
         String category = (String) searchMap.get("category");
         if (!"".equals(category)){
             //用户选择了分类选项
@@ -69,9 +80,13 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         }else {
             //用户没有选择分类选项,默认第一个分类
             //把商品分类中第一个分类传入,进行品牌和规格的查询
-            Map brandAndSpecList = searchBrandAndSpecList((String) list.get(0));
-            //放入到map集合中并返回
-            map.putAll(brandAndSpecList);//putAll()可以合并map集合,即合并了brandAndSpecList集合,但是如果有相同 key,会覆盖
+            if (list.size()>0){
+                Map brandAndSpecList = searchBrandAndSpecList((String) list.get(0));
+                //放入到map集合中并返回
+                map.putAll(brandAndSpecList);//putAll()可以合并map集合,即合并了brandAndSpecList集合,但是如果有相同 key,会覆盖
+            }
+
+
 
         }
 
@@ -176,6 +191,23 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         //对query进行条件添加
         query.setOffset((currentPage-1)*pageSize);//开始记录数
         query.setRows(pageSize);//显示记录数
+
+        //1.7排序
+        //对多条件进行排序,先判断前端是否给后端传入排序数据,如果传入了排序数据就执行下面方法
+        if ( !"".equals(searchMap.get("sort")) && !"".equals(searchMap.get("sortField"))){
+            String order = (String) searchMap.get("sort");
+            String sortField = (String) searchMap.get("sortField");
+
+            if ("ASC".equals(order)){
+                Sort sort = new Sort(Sort.Direction.ASC,"item_"+sortField);
+                query.addSort(sort);
+            }
+
+            if ("DESC".equals(order)){
+                Sort sort = new Sort(Sort.Direction.DESC,"item_"+sortField);
+                query.addSort(sort);
+            }
+        }
 
         /***********获取高亮对象***************/
         //通过solrTemplate进行查询

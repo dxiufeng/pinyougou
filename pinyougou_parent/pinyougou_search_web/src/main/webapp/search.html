@@ -16,12 +16,6 @@
     <script src="js/base.js"></script>
     <script src="js/service/searchService.js"></script>
     <script src="js/controller/searchController.js"></script>
-    <style>
-        .current{
-            background-color: #1aa5fb;
-            color: red;
-        }
-    </style>
 </head>
 
 <body ng-app="pinyougou" ng-controller="searchController">
@@ -271,19 +265,22 @@
                 <div class="navbar-inner filter">
                     <ul class="sui-nav">
                         <li class="active">
-                            <a href="#">综合</a>
+                            <a href="#" ng-click="sortSearch('','')">综合</a>
                         </li>
                         <li>
                             <a href="#">销量</a>
                         </li>
                         <li>
-                            <a href="#">新品</a>
+                            <a href="#" ng-click="sortSearch('DESC','updatetime')">新品</a>
                         </li>
                         <li>
                             <a href="#">评价</a>
                         </li>
                         <li>
-                            <a href="#">价格</a>
+                            <a href="#" ng-click="sortSearch('ASC','price')">价格↑</a>
+                        </li>
+                        <li>
+                            <a href="#" ng-click="sortSearch('DESC','price')">价格↓</a>
                         </li>
                     </ul>
                 </div>

@@ -21,7 +21,10 @@ app.controller('searchController', function ($scope, searchService) {
         'spec': {},
         'price': '',
         'currentPage': 1,
-        'pageSize': 20
+        'pageSize': 20,
+        'sort':'',
+        'sortField':''
+
     }; //初始化数据格式
 
     //添加搜索条件
@@ -111,6 +114,15 @@ app.controller('searchController', function ($scope, searchService) {
             return false
         }
         return true
+    }
+
+
+    //排序
+    $scope.sortSearch=function (sort, sortField) {
+        $scope.searchMap.sort=sort;
+        $scope.searchMap.sortField=sortField;
+        $scope.search();
+
     }
 
 

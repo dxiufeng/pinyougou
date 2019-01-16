@@ -35,6 +35,7 @@ public class SolrUtil {
             //对spec字段上的字符串转换为Map集合
             String spec = item.getSpec();
             Map map = JSON.parseObject(spec, Map.class);
+            System.out.println(map);
 
             //把map集合封装进item对象中
             item.setSpecMap(map);

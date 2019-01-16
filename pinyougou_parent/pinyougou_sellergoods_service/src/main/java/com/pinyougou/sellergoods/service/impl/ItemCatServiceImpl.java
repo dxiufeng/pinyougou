@@ -118,12 +118,16 @@ public class ItemCatServiceImpl implements ItemCatService {
 
         //缓存处理
         //查询表Tb_itemCat获取所有的数据集合
-        List<TbItemCat> list = findAll();
-        for (TbItemCat itemCat : list) {
-            //把每条数据中的name为key,typeId为值,放入到map集合中
-            redisTemplate.boundHashOps("itemList").put(itemCat.getName(), itemCat.getTypeId());
+        try {
+            List<TbItemCat> list = findAll();
+            for (TbItemCat itemCat : list) {
+                //把每条数据中的name为key,typeId为值,放入到map集合中
+                redisTemplate.boundHashOps("itemList").put(itemCat.getName(), itemCat.getTypeId());
+            }
+            System.out.println("更新缓存:商品分类表");
+        } catch (Exception e) {
+            System.out.println("缓存更新失败:findByParentId");
         }
-        System.out.println("更新缓存:商品分类表");
 
 
         return new PageResult(page.getTotal(), page.getResult());
@@ -142,12 +146,16 @@ public class ItemCatServiceImpl implements ItemCatService {
 
         //缓存处理
         //查询表Tb_itemCat获取所有的数据集合
-        List<TbItemCat> list = findAll();
-        for (TbItemCat itemCat : list) {
-            //把每条数据中的name为key,typeId为值,放入到map集合中
-            redisTemplate.boundHashOps("itemList").put(itemCat.getName(), itemCat.getTypeId());
+        try {
+            List<TbItemCat> list = findAll();
+            for (TbItemCat itemCat : list) {
+                //把每条数据中的name为key,typeId为值,放入到map集合中
+                redisTemplate.boundHashOps("itemList").put(itemCat.getName(), itemCat.getTypeId());
+            }
+            System.out.println("更新缓存:商品分类表");
+        } catch (Exception e) {
+            System.out.println("缓存更新失败:findByParentIdOne");
         }
-        System.out.println("更新缓存:商品分类表");
 
 
         return itemCats;
