@@ -1,8 +1,5 @@
 package com.pinyougou.sellergoods.service.impl;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.alibaba.dubbo.common.json.JSON;
 import com.alibaba.dubbo.common.json.ParseException;
@@ -266,5 +263,20 @@ public class GoodsServiceImpl implements GoodsService {
 			tbGoods.setAuditStatus(status);
 			goodsMapper.updateByPrimaryKey(tbGoods);
 		}
+	}
+
+
+	//通过spu的id,查询sku的数据
+	@Override
+	public List<TbItem> findItemListByGoodsIdAndStatus(Long[] ids, String status) {
+
+		TbItemExample example = new TbItemExample();
+
+		TbItemExample.Criteria criteria = example.createCriteria();
+		 criteria.andGoodsIdIn(Arrays.asList(ids));
+		 criteria.andStatusEqualTo(status);
+		List<TbItem> itemList = itemMapper.selectByExample(example);
+
+		return itemList;
 	}
 }

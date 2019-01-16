@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.query.Query;
+import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,8 +29,6 @@ public class SolrUtil {
         TbItemExample.Criteria criteria = example.createCriteria();
         criteria.andStatusEqualTo("1");
         List<TbItem> items = itemMapper.selectByExample(example);
-
-
         //把查询出来的所有记录进行遍历
         for (TbItem item : items) {
 
@@ -39,26 +39,26 @@ public class SolrUtil {
 
             //把map集合封装进item对象中
             item.setSpecMap(map);
-
-
         }
-
-
         //把字段上传到solrhome
         solrTemplate.saveBeans(items);
-
         //提交事务
         solrTemplate.commit();
+    }
 
-
-
-
+    //清空solr索引库中的数据
+    public void deleteAll(){
+        Query query=new SimpleQuery("*:*");
+        solrTemplate.delete(query);
+        solrTemplate.commit();
     }
 
 
     public static void main(String[] args) {
         ApplicationContext ac = new ClassPathXmlApplicationContext("classpath*:spring/applicationContext*.xml");
         SolrUtil sorlUtil = (SolrUtil) ac.getBean("solrUtil");
-        sorlUtil.importItemData();
+        //sorlUtil.importItemData();
+
+        sorlUtil.deleteAll();
     }
 }

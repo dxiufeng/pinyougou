@@ -3,7 +3,9 @@ package com.pinyougou.manager.controller;
 import java.util.List;
 
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
+import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,9 @@ public class GoodsController {
 
     @Reference
     private GoodsService goodsService;
+
+    @Reference
+    private ItemSearchService itemSearchService;
 
     /**
      * 返回全部列表
@@ -123,6 +128,29 @@ public class GoodsController {
     public Result updateStatus(Long[] ids, String status) {
         try {
             goodsService.updateStatus(ids, status);
+            //审核通过后,需要通过这些数据spu的id 来查询出sku的数据,并把数据存储到solr数据库中
+
+            if ("1".equals(status)){
+                //审核通过了
+                //1.根据spu的id 查询sku的数据
+                List<TbItem> itemList = goodsService.findItemListByGoodsIdAndStatus(ids, status);
+
+
+                //判断是否存在sku数据
+                if (itemList.size()>0){
+                    //2.把审核好的数据更新到solr中
+                    itemSearchService.importItemData(itemList);
+                }
+
+
+            }
+
+            if("0".equals(status)){
+                //审核没通过,要删除数据
+            }
+
+
+
             return new Result(true, "审核成功");
         } catch (Exception e) {
             e.printStackTrace();

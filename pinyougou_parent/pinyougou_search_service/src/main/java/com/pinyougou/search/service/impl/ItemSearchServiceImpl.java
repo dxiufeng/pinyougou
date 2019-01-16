@@ -308,4 +308,14 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         return map;
     }
 
+    /**
+     * 更新solr索引库
+     */
+    @Override
+    public void importItemData(List<TbItem> itemList){
+        solrTemplate.saveBeans(itemList);
+        solrTemplate.commit();
+        System.out.println("数据上传到solr成功");
+    }
+
 }
