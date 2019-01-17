@@ -2,6 +2,7 @@ package com.pinyougou.manager.controller;
 
 import java.util.List;
 
+import com.pinyougou.page.service.ItemPageService;
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
@@ -150,6 +151,14 @@ public class GoodsController {
             e.printStackTrace();
             return new Result(false, "审核失败");
         }
+    }
+
+    @Reference(timeout = 400000)
+    private ItemPageService itemPageService;
+
+    @RequestMapping("/getHtml")
+    public void getHtml(Long goodsId){
+        boolean itemHtml = itemPageService.getItemHtml(goodsId);
     }
 
 }
