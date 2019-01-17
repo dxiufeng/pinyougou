@@ -10,6 +10,7 @@
         <module name="pinyougou_content_interface" />
         <module name="pinyougou_content_service" />
         <module name="pinyougou_dao" />
+        <module name="pinyougou_item_html" />
         <module name="pinyougou_manager_web" />
         <module name="pinyougou_page_interface" />
         <module name="pinyougou_page_service" />
@@ -29,6 +30,7 @@
       <module name="pinyougou_content_interface" target="1.8" />
       <module name="pinyougou_content_service" target="1.8" />
       <module name="pinyougou_dao" target="1.8" />
+      <module name="pinyougou_item_html" target="1.8" />
       <module name="pinyougou_manager_web" target="1.8" />
       <module name="pinyougou_page_interface" target="1.8" />
       <module name="pinyougou_page_service" target="1.8" />
