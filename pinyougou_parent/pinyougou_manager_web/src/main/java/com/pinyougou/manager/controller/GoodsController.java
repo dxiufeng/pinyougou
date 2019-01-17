@@ -136,7 +136,7 @@ public class GoodsController {
 
             //审核通过后,需要通过这些数据spu的id 来查询出sku的数据,并把数据存储到solr数据库中
             if ("1".equals(status)){
-                //审核通过了
+                //审核通过了,
                 //1.根据spu的id 查询sku的数据
                 List<TbItem> itemList = goodsService.findItemListByGoodsIdAndStatus(ids, status);
                 //判断是否存在sku数据
@@ -144,6 +144,14 @@ public class GoodsController {
                     //2.把审核好的数据更新到solr中
                     itemSearchService.importItemData(itemList);
                 }
+
+                //3
+                     //生成静态html页面
+                for (Long id : ids) {
+                    itemPageService.getItemHtml(id);
+                }
+
+
             }
 
             return new Result(true, "审核成功");
@@ -156,6 +164,8 @@ public class GoodsController {
     @Reference(timeout = 400000)
     private ItemPageService itemPageService;
 
+
+    //测试用的方法
     @RequestMapping("/getHtml")
     public void getHtml(Long goodsId){
         boolean itemHtml = itemPageService.getItemHtml(goodsId);

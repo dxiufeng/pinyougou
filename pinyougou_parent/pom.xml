@@ -26,6 +26,7 @@
         <module>pinyougou_page_interface</module>
         <module>pinyougou_page_service</module>
         <module>pinyougou_item_html</module>
+        <module>pinyougou_page_web</module>
     </modules>
 
 

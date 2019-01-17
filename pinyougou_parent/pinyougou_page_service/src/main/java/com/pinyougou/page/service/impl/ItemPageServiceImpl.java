@@ -4,9 +4,12 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.pinyougou.mapper.TbGoodsDescMapper;
 import com.pinyougou.mapper.TbGoodsMapper;
 import com.pinyougou.mapper.TbItemCatMapper;
+import com.pinyougou.mapper.TbItemMapper;
 import com.pinyougou.page.service.ItemPageService;
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbGoodsDesc;
+import com.pinyougou.pojo.TbItem;
+import com.pinyougou.pojo.TbItemExample;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -31,6 +35,8 @@ public class ItemPageServiceImpl implements ItemPageService {
     private TbGoodsDescMapper goodsDescMapper;
     @Autowired
     private TbItemCatMapper itemCatMapper;
+    @Autowired
+    private TbItemMapper itemMapper;
 
 
     //生成静态页面
@@ -56,6 +62,15 @@ public class ItemPageServiceImpl implements ItemPageService {
             dataMap.put("category1",itemName1);
             dataMap.put("category2",itemName2);
             dataMap.put("category3",itemName3);
+
+            //4.2读取sku表中的数据,并把数据生成在页面上
+            TbItemExample example = new TbItemExample();
+            TbItemExample.Criteria criteria = example.createCriteria();
+            criteria.andStatusEqualTo("1");
+            criteria.andGoodsIdEqualTo(goodsId);
+            example.setOrderByClause("is_default desc");
+            List<TbItem> items = itemMapper.selectByExample(example);
+            dataMap.put("itemList", items);
 
             //5 创建输出流,并确定输出的文件路径和名字
             Writer writer=new FileWriter(pagedir+goodsId+".html");
